@@ -19,8 +19,8 @@
 #define FACTORY_LOGGER_UID  "adm"
 #define LOGGER_LOGGER_UID   "core"
 #else
-#define FACTORY_LOGGER_UID  "gabbo"
-#define LOGGER_LOGGER_UID   "gabbo"
+#define FACTORY_LOGGER_UID  TopLevelDomain
+#define LOGGER_LOGGER_UID   TopLevelDomain
 #endif
 
 #define LOGGER_STALE_TIME  300

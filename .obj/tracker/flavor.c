@@ -6,7 +6,7 @@
  */
 #pragma no_clone
 
-#define DefaultFlavor   "gabbo-basic"
+#define DefaultFlavor   "acme-basic"
 #define FlavorAvatar    _ObjDir "/avatar"
 
 string query_avatar(string flavor, string player_id);

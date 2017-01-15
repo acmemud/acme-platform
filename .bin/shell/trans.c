@@ -2,14 +2,14 @@ inherit CommandCode;
 
 #include <expand_object.h>
 #include <mobile.h>
-#include <capabilities.h>
+#include <capability.h>
 
 #define DEFAULT_CONTEXT        "users"
 
-private variables private functions inherit ArgsLib;
-private variables private functions inherit GetoptsLib;
-private variables private functions inherit ObjectExpansionLib;
-private variables private functions inherit ObjectLib;
+inherit ArgsLib;
+inherit GetoptsLib;
+inherit ObjectExpansionLib;
+inherit ObjectLib;
 
 private int valid_environment(object arg);
 private object find_room(object arg);

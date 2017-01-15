@@ -4,8 +4,6 @@
 #define LPC_EXTENSION         ".c"
 #define CLONE_DELIM           "#"
 
-#define DEFAULT_DOMAIN        ".platform"
-
 #define PATH_INFO_ONAME       0
 #define PATH_INFO_UID         1
 #define PATH_INFO_USER        2

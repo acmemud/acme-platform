@@ -7,7 +7,7 @@
 
 #include <argument.h>
 
-inherit StringsLib;
+inherit StringLib;
 inherit ArrayLib;
 
 private int _find_close_char(string str, int start, string open,

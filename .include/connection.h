@@ -1,7 +1,7 @@
 #ifndef _CONNECTION_H
 #define _CONNECTION_H
 
-#define GUI_TERMS       ([ "gabbo" ])
+#define GUI_TERMS       ([ "acme" ])
 #define ANSI_TERMS      ([ "ansi" ])
 
 #define DEFAULT_SCREEN_WIDTH   80

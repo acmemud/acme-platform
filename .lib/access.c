@@ -12,6 +12,8 @@
  * @param  objectname    the path of the object being created
  * @return the uid at create time
  */
+#include <access.h>
+
 string get_create_uid(string objectname) {
   if (objectp(DomainTracker)) {
     return DomainTracker->query_domain_id(objectname);

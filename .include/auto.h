@@ -14,7 +14,8 @@
 #pragma warn_function_inconsistent
 
 #define AutoInclude          "auto.h"
-#define ToplevelDomain       "gabbo"
+#define TopLevelDomain       "acme"
+#define WebClientTerm        "acme"
 
 #define FlavorDir            "/flavor"
 #define PlatformDir          "/platform"

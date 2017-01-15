@@ -2,7 +2,7 @@
  * The ShellMixin provides the features of a Unix-like shell.
  * @alias ShellMixin
  */
-#include <capabilities.h>
+#include <capability.h>
 #include <command_giver.h>
 
 // TODO environment variables

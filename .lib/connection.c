@@ -4,11 +4,11 @@
  * @author devo@eotl
  * @alias ConnectionLib
  */
-#include <capabilities.h>
+#include <capability.h>
 #include <command_giver.h>
 #include <connection.h>
 
-inherit ObjectLib;
+inherit CapabilityLib;
 
 struct ConnectionInfo {
   string id;

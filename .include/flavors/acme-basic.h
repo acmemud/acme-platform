@@ -1,4 +1,4 @@
-#define Flavor "gabbo-basic"
+#define Flavor "acme-basic"
 #include <flavor_config.h>
 
 #define CartesianRoomCode    ModuleDir "/room_cartesian"

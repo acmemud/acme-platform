@@ -6,10 +6,10 @@
  */
 #include <expand_object.h>
 
-private variables private functions inherit ArrayLib;
-private variables private functions inherit ArgsLib;
-private variables private functions inherit FileLib;
-private variables private functions inherit StringsLib;
+inherit ArrayLib;
+inherit ArgumentLib;
+inherit FileLib;
+inherit StringLib;
 
 private mixed *expand_group(string ospec, object who, string context,
                             string root_context, string *new_context,

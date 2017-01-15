@@ -15,6 +15,7 @@
 #define CAP_PROPERTY         "property"
 #define CAP_SENSOR           "sensor"
 #define CAP_SHELL            "shell"
+#define CAP_SOUL             "soul"
 #define CAP_VISIBLE          "visible"
 
 #endif  // _CAPABILITY_H

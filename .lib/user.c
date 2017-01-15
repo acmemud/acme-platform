@@ -9,7 +9,7 @@
 inherit FileLib;
 inherit ConnectionLib;
 inherit SessionLib;
-inherit FormatStringsLib;
+inherit FormatStringLib;
 
 struct UserInfo {
   string id;
@@ -22,8 +22,9 @@ int user_exists(string username);
 string passwd_file(string username);
 string hash_passwd(string password);
 string create_user(string username, string password);
-int install_skeleton(string user_dir);
+int install_skeleton(string user_dir, string username);
 int apply_template(string template, string username);
+int save_password(string user_id, string password);
 string attach_session(object login, string user_id);
 
 /**
@@ -79,7 +80,7 @@ string create_user(string username, string password) {
   object logger = LoggerFactory->get_logger(THISO);
 
   string user_dir = user_dir(username);
-  if (!install_skeleton(user_dir)) {
+  if (!install_skeleton(user_dir, username)) {
     logger->warn("unable to install skeleton user dir: %O", user_dir);
   }
 
@@ -97,9 +98,10 @@ string create_user(string username, string password) {
  * copying the files and applying the templates.
  * 
  * @param  user_dir      the user dir to isntall to
+ * @param  username      the username of the dir's owner
  * @return 1 for success, 0 for failure
  */
-int install_skeleton(string user_dir) {
+int install_skeleton(string user_dir, string username) {
   object logger = LoggerFactory->get_logger(THISO);
   if (file_exists(user_dir)) {
     return 0;
@@ -129,7 +131,7 @@ int apply_template(string template_path, string username) {
   mapping infomap = ([ 
     'f' : ({ 0,
              "%s",
-             ({ "gabbo-basic" }) // TODO support user flavors
+             ({ "acme-basic" }) // TODO support user flavors
           }),
     'u' : ({ 0,
              "%s",

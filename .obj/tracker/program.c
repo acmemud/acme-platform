@@ -6,9 +6,11 @@
  */
 #pragma no_clone
 #include <sys/objectinfo.h>
+#include <sql.h>
 
 inherit SqlMixin;
 inherit ProgramLib;
+inherit ArrayLib;
 
 // program_id = "program_name#program_time3program_count"
 // ([ str program_id : ProgramInfo info ])
@@ -24,9 +26,6 @@ private int program_counter;
 #define PROGRAM_NAME      "program_name"
 #define PROGRAM_TIME      "program_time"
 #define PROGRAM_SIZE      "program_size"
-#define PROGRAM_BLUEPRINT  0
-#define PROGRAM_CLONES     1
-#define PROGRAM_COUNT      2
 
 protected void setup();
 string get_id(string program_name, int program_time, int program_count);
@@ -43,10 +42,26 @@ public mapping query_clones(string program_id);
  */
 protected void setup() {
   SqlMixin::setup();
+  SqlMixin::table_info(PROGRAM_TABLE, (:
+    if (!$1) {
+      SqlMixin::create_table(PROGRAM_TABLE, mapping_array(
+        ({ SQL_COL_NAME, SQL_COL_TYPE, SQL_COL_FLAGS, SQL_COL_DEFAULT }),
+        ({ 
+           ({ SQL_ID_COLUMN, SQL_TYPE_INTEGER, 
+              SQL_FLAG_PRIMARY_KEY|SQL_FLAG_AUTOINCREMENT }),
+           ({ PROGRAM_ID, SQL_TYPE_TEXT, SQL_FLAG_UNIQUE }),
+           ({ PROGRAM_NAME, SQL_TYPE_TEXT }),
+           ({ PROGRAM_TIME, SQL_TYPE_INTEGER }),
+           ({ PROGRAM_SIZE, SQL_TYPE_INTEGER })
+        })
+      ));
+    }
+    return;
+  :));
   programs = ([ ]);
   program_names = ([ ]);
   object_map = ([ ]);
-  // TODO fill mem cache with existing programs/clones from objdump
+  // TODO retroactively track existing programs/clones from objdump
 }
 
 /**

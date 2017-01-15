@@ -4,7 +4,7 @@
  * @author devo@eotl
  * @alias PlayerMixin
  */
-#include <capabilities.h>
+#include <capability.h>
 
 inherit AvatarMixin;
 inherit SoulMixin;

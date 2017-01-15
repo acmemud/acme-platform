@@ -8,8 +8,8 @@
 
 #define UNMATCHED_ARG  "__UNMATCHED_PARSE_COMMAND_ARG"
 
-inherit StringsLib;
-inherit ArgsLib;
+inherit StringLib;
+inherit ArgumentLib;
 
 mixed *apply_syntax(mixed *command, string arg, mapping opts, mapping badopts, 
                     string *args);
@@ -108,7 +108,11 @@ mixed *apply_syntax(mixed *command, string arg, mapping opts, mapping badopts,
  */
 mixed *get_matching_syntax(mapping syntax_map, mapping opts, mapping badopts, 
                            mixed *args) {
-  foreach (mixed *syntax, syn_opts, syn_badopts, syn_args : syntax_map) {
+  foreach (mixed *syntax, 
+           mapping syn_opts, 
+           mapping syn_badopts, 
+           string *syn_args 
+           : syntax_map) {
     if (valid_syntax(syntax, syn_opts, syn_badopts, syn_args)) {
       opts = syn_opts;
       badopts = syn_badopts;
@@ -117,7 +121,11 @@ mixed *get_matching_syntax(mapping syntax_map, mapping opts, mapping badopts,
     }
   }
 
-  foreach (mixed *syntax, syn_opts, syn_badopts, syn_args : syntax_map) {
+  foreach (mixed *syntax, 
+           mapping syn_opts, 
+           mapping syn_badopts, 
+           string *syn_args 
+           : syntax_map) {
     if (valid_syntax(syntax, syn_opts, ([ ]), syn_args)) {
       opts = syn_opts;
       badopts = syn_badopts;
@@ -330,6 +338,7 @@ string *parse_args(string arg, int pos, mapping syntax) {
     default:
       return parse_args_explode(arg, &pos, syntax[SYNTAX_EXPLODE_ARGS]);
   }
+  return 0;
 }
 
 /**

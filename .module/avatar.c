@@ -4,7 +4,7 @@
  * @author devo@eotl
  * @alias AvatarMixin
  */
-#include <capabilities.h>
+#include <capability.h>
 #include <command_giver.h>
 
 inherit CommandGiverMixin;
@@ -23,9 +23,11 @@ mapping slave_sessions;
 protected void setup();
 public mixed *try_descend(string session_id);
 public void on_descend(string session_id);
-protected int add_session(string session_id);
-protected int remove_session(string session_id);
-public mapping query_sessions();
+protected int set_master_session(string session_id);
+public string query_master_session();
+protected int add_slave_session(string session_id);
+protected int remove_slave_session(string session_id);
+public mapping query_slave_sessions();
 public string query_username();
 public nomask int is_avatar();
 

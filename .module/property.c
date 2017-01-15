@@ -30,7 +30,7 @@
  */
 
 #include <property.h>
-#include <capabilities.h>
+#include <capability.h>
 
 inherit FileLib;
 

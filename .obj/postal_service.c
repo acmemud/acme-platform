@@ -7,10 +7,12 @@
  * @alias PostalService
  */
 #include <message.h>
-#include <capabilities.h>
+#include <capability.h>
 
 inherit MessageLib;
-inherit ObjectLib;
+inherit CapabilityLib;
+
+object logger = LoggerFactory->get_logger(THISO);
 
 /**
  * Send a message to a sensor object. Target must be a sensor.
@@ -27,7 +29,7 @@ inherit ObjectLib;
  *         could not be sent
  */
 varargs struct Message send_message(object target, string topic, 
-                                    string message mapping context, 
+                                    string message, mapping context, 
                                     object sender) {
   if (!mappingp(context)) {
     context = ([ ]);
@@ -76,7 +78,7 @@ varargs string prompt_message(object target, object sender) {
 
   // XXX make sure query_command() is 0 (coming from input_to())
 
-  mixed prompt = set_prompt(0, who);
+  mixed prompt = set_prompt(0, target);
   if (closurep(prompt)) {
     prompt = funcall(prompt);
   } 

@@ -14,9 +14,9 @@
 #define ARG_OPEN     "{["
 #define ARG_CLOSE    "}]"
 
-inherit ArgsLib;
+inherit ArgumentLib;
 inherit ArrayLib;
-inherit StringsLib;
+inherit StringLib;
 inherit ClosureLib;
 
 varargs string *explode_format(string str, string delim,

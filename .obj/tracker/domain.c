@@ -504,7 +504,7 @@ string resolve_sysinclude(string file, string p) {
   if (p[<15..<1] == " (auto include)") {
     p = p[0..<16];
   }
-  struct DomainConfig domain = query_domain(query_domain_id(p));
+  struct DomainConfig domain = deep_copy(domains[query_domain_id(p)]);
 
   string path = file;
   if (file[0] != '/') {

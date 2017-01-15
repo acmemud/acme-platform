@@ -7,8 +7,11 @@
 #include <sys/files.h>
 #include <sys/inherit_list.h>
 #include <sys/functionlist.h>
+#include <access.h>
 #include <object.h>
 #include <zone.h>
+
+inherit AccessLib;
 
 /**
  * Test whether an object is reachable from another object.

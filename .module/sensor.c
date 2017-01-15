@@ -6,7 +6,7 @@
  * @author devo@eotl
  * @alias SensorMixin
  */
-#include <capabilities.h>
+#include <capability.h>
 #include <command_giver.h>
 #include <message.h>
 #include <sensor.h>
@@ -85,6 +85,7 @@ struct Message render_message(string topic, string message, mapping context,
  */
 void on_message(struct Message msg) {
   return;
+}
 
 /**
  * Get the terminal type of this sensor. Returns a reasonable default at the

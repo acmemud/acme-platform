@@ -53,7 +53,7 @@ string render(string term, string topic, string message, mapping context,
  */
 string render_welcome(string term, string topic, string message, 
                       mapping context, object sender) {
-  if (term == "gabbo") {
+  if (term == WebClientTerm) {
     return render_json(topic, message, context, sender);
   }
   message = sprintf("%s%s%s%s\n", 

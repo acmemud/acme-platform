@@ -7,6 +7,7 @@
 #pragma no_clone
 
 inherit FileLib;
+inherit FlavorLib;
 inherit ObjectLib;
 
 // ([ str topic_id :  map topic_definition ])

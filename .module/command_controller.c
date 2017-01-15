@@ -14,12 +14,12 @@
 
 inherit CommandLib;
 inherit MessageLib;
-inherit ArgsLib;
-inherit StringsLib;
+inherit ArgumentLib;
+inherit StringLib;
 inherit StructLib;
 inherit ObjectExpansionLib;
 inherit FileLib;
-inherit FormatStringsLib;
+inherit FormatStringLib;
 
 struct CommandState {
   string verb;
@@ -38,7 +38,7 @@ struct CommandState {
 #define DEFAULT_FAIL "%m\n"
 
 mapping do_command(mixed *command, string verb, string arg);
-int process_command(struct CommandState state, closure callback);
+mapping process_command(struct CommandState state, closure callback);
 int process_args(struct CommandState state, closure callback);
 int process_opts(struct CommandState state, mapping opts, closure callback);
 int process_extra(struct CommandState state, closure callback);
@@ -48,6 +48,8 @@ void field_prompt(struct CommandState state, mixed *field, string field_type,
                   mixed index, closure callback);
 void field_input(string arg, struct CommandState state, mixed *field, 
                  string field_type, mixed index, closure callback);
+string parse_value(struct CommandState state, mixed *field, string field_type, 
+                   mixed index, mixed val);
 string parse_boolean(string arg, mixed val);
 string parse_int(string arg, mixed val);
 string parse_float(string arg, mixed val);
@@ -59,9 +61,9 @@ string parse_objects(string arg, mixed val);
 varargs int do_validate(struct CommandState state, closure callback, 
                         int flags);
 int validate(mixed *validations, struct CommandState state, mixed val, 
-             mixed *field, closure retry_test) {
-int do_execute(mapping model, string verb);
-int execute(mapping model, string verb);
+             mixed *field, closure retry_test);
+mapping do_execute(mapping model, string verb);
+mapping execute(mapping model, string verb);
 
 closure prompt_formatter, fail_formatter;
 
@@ -141,7 +143,7 @@ mapping process_command(struct CommandState state, closure callback) {
   if (!process_extra(state, callback)) {
     return 0;
   }
-  if (!validate(state, callback, VALIDATE_SKIP_FIELDS)) {
+  if (!do_validate(state, callback, VALIDATE_SKIP_FIELDS)) {
     return 0;
   }
 
@@ -319,7 +321,7 @@ int process_extra(struct CommandState state, closure callback) {
 int process_field(struct CommandState state, mixed *field, string field_type, 
                   mixed index, closure callback) {
   mixed val;
-  string fail = parse_field(state, field, field_type, index, &val);
+  string fail = parse_value(state, field, field_type, index, &val);
   if (fail) {
     if (state->field_retry >= field[FIELD_MAX_RETRY]) {
       // TODO set fail message
@@ -348,7 +350,7 @@ int process_field(struct CommandState state, mixed *field, string field_type,
     }
 
     // validation passed, add to model
-    state->model[id] = val;
+    state->model[field[FIELD_ID]] = val;
     // reset retries to 0 fo next field
     state->field_retry = 0;
     // if form retry, force prompt for next field
@@ -644,7 +646,7 @@ varargs int do_validate(struct CommandState state, closure callback,
                         int flags) {
   closure retry_test = (: 
     return ($1->form_retry < $1->command[COMMAND_MAX_RETRY]);
-  :)
+  :);
 
   if (!(flags & VALIDATE_SKIP_FIELDS)) {
     foreach (mixed *field : state->command[COMMAND_FIELDS]) {
@@ -665,7 +667,7 @@ varargs int do_validate(struct CommandState state, closure callback,
   // do form validation
   mixed *validations = state->syntax[SYNTAX_VALIDATION] 
                        + state->command[COMMAND_VALIDATION];
-  int valid = validate(validations, state, model, 0, retry_test);
+  int valid = validate(validations, state, state->model, 0, retry_test);
   if (valid == VALIDATION_RETRY) {
     state->form_retry += 1;
     state->model = ([ ]);

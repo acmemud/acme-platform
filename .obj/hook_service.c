@@ -140,9 +140,9 @@ void track_object(object ob) {
 
   if (FINDO(ProgramTracker)) {
     if (!clonep(ob)) {
-      ProgramTracker->new_program(o);
+      ProgramTracker->new_program(ob);
     } else {
-      ProgramTracker->program_cloned(o);
+      ProgramTracker->program_cloned(ob);
     }
   }
 
@@ -165,7 +165,7 @@ void track_object(object ob) {
 int create_hook(object ob) {  
   if (load_name(ob) == SQLiteClient) {
     call_out(#'track_object, 0, ob);
-  } else
+  } else {
     track_object(ob);
   }
 

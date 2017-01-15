@@ -6,7 +6,7 @@
  */
 
 #include <sys/functionlist.h>
-#include <capabilities.h>
+#include <capability.h>
 #include <command_giver.h>
 #include <command.h>
 

@@ -52,10 +52,9 @@ string new_zone(string zone_id) {
   string parent_id = get_parent_zone(zone_id);
   if (parent_id) {
     if (!member(zones, parent_id)) {
-      parent = new_zone(parent_id);
-    } else {
-      parent = zones[parent_id];
-    }
+      parent_id = new_zone(parent_id);
+    } 
+    parent = zones[parent_id];
   }
   zones[zone_id] = (<ZoneInfo> 
     id: zone_id,
@@ -132,10 +131,10 @@ string new_instance(string zone_id, string label) {
  *         session
  */
 string query_starting_instance(string zone_id, string session_id) {
-  struct ZoneInfo zone = zones[zone_id];
-  if (!zone) {
-    zone = new_zone(zone_id);
+  if (!member(zones, zone_id)) {
+    zone_id = new_zone(zone_id);
   }
+  struct ZoneInfo zone = zones[zone_id];
   if (sizeof(zone->instances)) {
     string instance_id;
     foreach (instance_id : zone->instances) {

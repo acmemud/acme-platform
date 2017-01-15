@@ -125,7 +125,7 @@ protected void welcome(string terminal, mixed is_default) {
  * inactivity.
  */
 protected void attempt_timeout() {
-  if (query_idle(THISO) > TIMEOUT_SECS) {
+  if (!THISO || (query_idle(THISO) > TIMEOUT_SECS)) {
     timeout();
     set_heart_beat(0);
   }

@@ -168,7 +168,6 @@ void telnet_negotiation(object interactive, int cmd, int opt, int *optargs) {
     connection_id = new_connection(interactive);
   }
   struct ConnectionState connection = connections[connection_id];
-  object interactive = connection->interactive;
   struct ConnectionInfo info = connection->info;
 
   int dont_log;
