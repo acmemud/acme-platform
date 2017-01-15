@@ -25,44 +25,48 @@
 private inherit AcmeFormatStrings;
 private inherit AcmeFile;
 #else
-inherit FileLib;
-inherit ObjectLib;
-inherit ZoneLib;
-inherit FormatStringLib;
+private inherit FileLib;
+private inherit ObjectLib;
+private inherit ZoneLib;
+private inherit FormatStringLib;
 #endif
 
 // FUTURE add color
 
-default private variables;
-
 /** ([ str zone : ([ str euid : obj logger ]) ]) */
-mapping loggers;
-
+private mapping loggers;
 /** ([ obj logger : int ref_count ]) */
-mapping local_ref_counts;
-
+private mapping local_ref_counts;
 /** ([ str format : cl formatter ]) */
-mapping formatters;
-
+private mapping formatters;
 /** a Logger instance for the factory to use */
-object factory_logger;
-
+private object factory_logger;
 /** all Logger instances must share a Logger
     (or else things would get crazy pretty fast) */
-object logger_logger;
+private object logger_logger;
 
-default private functions;
-
+public void setup();
 public varargs object get_logger(mixed zone, object rel, int reconfig);
-mapping read_config(string zone, string dir);
-mapping read_properties(string prop_file);
-string read_prop_value(mapping props, string prop, string dir,
-                       string zone);
+protected mapping read_config(string zone, string dir);
+protected mapping read_properties(string prop_file);
+protected string read_prop_value(mapping props, string prop, string path, 
+                                 string zone);
 protected mixed *parse_output_prop(string val);
 public object get_null_logger();
-public int release_logger(mixed zone);
-int clean_up_loggers();
-void init_static_loggers();
+public int release_logger(mixed zone, string euid);
+protected int clean_up_loggers();
+protected void init_static_loggers();
+
+/**
+ * Setup the LoggerFactory.
+ */
+public void setup() {
+  seteuid(getuid());
+  loggers = ([ ]);
+  formatters = ([ ]);
+  local_ref_counts = ([ ]);
+  init_static_loggers();
+}
 
 /**
  * Retrieve a logger instance for the given zone from the pool, or create
@@ -172,7 +176,7 @@ public varargs object get_logger(mixed zone, object rel, int reconfig) {
  *                  properties files
  * @return          the configuration mapping
  */
-mapping read_config(string zone, string dir) {
+protected mapping read_config(string zone, string dir) {
   mapping result = ([ ]);  
   while (dir = dirname(dir)) {
     mapping props = read_properties(dir + "/" PROP_FILE);
@@ -220,7 +224,7 @@ mapping read_config(string zone, string dir) {
  * @return           a mapping of property names to values, or 0 if the file
  *                   could not be read
  */
-mapping read_properties(string prop_file) {
+protected mapping read_properties(string prop_file) {
   mapping result = ([ ]);
   int count = 0;
 
@@ -260,7 +264,8 @@ mapping read_properties(string prop_file) {
  * @return          the property value for the specified property name and
  *                  zone, or 0 if no matching property could be found
  */
-string read_prop_value(mapping props, string prop, string path, string zone) {
+protected string read_prop_value(mapping props, string prop, string path, 
+                                 string zone) {
   if (zone[0..(strlen(path) - 1)] != path) {
     return 0;
   }
@@ -305,7 +310,6 @@ protected mixed *parse_output_prop(string val) {
   }
   return result;
 }
-
 
 /**
  * Return a new no-op logger.
@@ -361,7 +365,7 @@ public int release_logger(mixed zone, string euid) {
  * @return the number of logging zones released (may be more than the
  *         number loggers destructed if loggers are shared between zones)
  */
-int clean_up_loggers() {
+protected int clean_up_loggers() {
   int result = 0;
   foreach (string zone, mapping euids : loggers) {
     foreach (string euid, object logger : euids) {
@@ -382,7 +386,7 @@ int clean_up_loggers() {
  * configured loggers, one for the factory itself to use, and one for all
  * loggers to use.
  */
-void init_static_loggers() {
+protected void init_static_loggers() {
   string euid = geteuid();
 
   seteuid(LOGGER_LOGGER_UID);
@@ -420,14 +424,8 @@ void init_static_loggers() {
  *
  * @return number of seconds until first reset
  */
-public int create() {
-  seteuid(getuid());
-  loggers = ([ ]);
-  formatters = ([ ]);
-  local_ref_counts = ([ ]);
-
-  init_static_loggers();
-  return FACTORY_RESET_TIME;
+public void create() {
+  setup();
 }
 
 /**

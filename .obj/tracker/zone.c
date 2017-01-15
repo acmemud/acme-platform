@@ -8,27 +8,27 @@
 #include <sys/xml.h>
 #include <zone.h>
 
-inherit ZoneLib;
-inherit FileLib;
+private inherit ZoneLib;
+private inherit FileLib;
 
 // ([ str id : ZoneInfo zone ])
-mapping zones;
+private mapping zones;
 // ([ str id : ZoneInstance instance ])
-mapping instances;
-int instance_counter;
+private mapping instances;
+private int instance_counter;
 
-void setup();
-string new_zone(string zone_id);
-int load_config(string zone_id);
-string new_instance(string zone_id, string label);
-string query_starting_instance(string zone_id, string session_id);
-string query_flavor(string zone_id);
-string get_instance_id(string zone_id, int instance_count);
+public void setup();
+public string new_zone(string zone_id);
+public int load_config(string zone_id);
+public string new_instance(string zone_id, string label);
+public string query_starting_instance(string zone_id, string session_id);
+public string query_flavor(string zone_id);
+protected string get_instance_id(string zone_id, int instance_count);
 
 /**
  * Setup the ZoneTracker.
  */
-void setup() {
+public void setup() {
   zones = ([ ]);
   instances = ([ ]);
 }
@@ -41,7 +41,7 @@ void setup() {
  * @param  zone_id       the zone id of the new zone, same as the system path
  * @return the zone id for success, 0 for failure
  */
-string new_zone(string zone_id) {
+public string new_zone(string zone_id) {
   if (member(zones, zone_id)) {
     return 0;
   }
@@ -77,7 +77,7 @@ string new_zone(string zone_id) {
  * @param  zone_id       the zone id to configure
  * @return 0 for failure, 1 for success
  */
-int load_config(string zone_id) {
+public int load_config(string zone_id) {
   object logger = LoggerFactory->get_logger(THISO);
   struct ZoneInfo zone = zones[zone_id];
   if (!zone) {
@@ -107,7 +107,7 @@ int load_config(string zone_id) {
  * @param  label         a friendly label for the new instance
  * @return the instance id of the newly created instance
  */
-string new_instance(string zone_id, string label) {
+public string new_instance(string zone_id, string label) {
   int instance_count = ++instance_counter;
   string instance_id = get_instance_id(zone_id, instance_count);
   instances[instance_id] = (<ZoneInstanceInfo> 
@@ -130,7 +130,7 @@ string new_instance(string zone_id, string label) {
  * @return the zone instance id of the starting zone instance for the specified
  *         session
  */
-string query_starting_instance(string zone_id, string session_id) {
+public string query_starting_instance(string zone_id, string session_id) {
   if (!member(zones, zone_id)) {
     zone_id = new_zone(zone_id);
   }
@@ -153,7 +153,7 @@ string query_starting_instance(string zone_id, string session_id) {
  * @param  zone_id       the zone being queried
  * @return the flavor of the specified zone
  */
-string query_flavor(string zone_id) {
+public string query_flavor(string zone_id) {
   struct ZoneInfo zone = zones[zone_id];
   if (!zone) {
     return 0;
@@ -168,13 +168,13 @@ string query_flavor(string zone_id) {
  * @param  instance_count the instance count
  * @return the zone instance id
  */
-string get_instance_id(string zone_id, int instance_count) {
+protected string get_instance_id(string zone_id, int instance_count) {
   return sprintf("%s#%d", zone_id, instance_count);
 }
 
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   setup();
 }

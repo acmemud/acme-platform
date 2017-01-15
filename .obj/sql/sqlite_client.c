@@ -6,7 +6,26 @@
  */
 #include <sql.h>
 
-inherit SqlLib;
+private inherit SqlLib;
+
+public void setup();
+public int connect(string file);
+public varargs int insert(string table, mapping data, 
+                          closure callback, varargs mixed *args);
+public varargs int update(string table, mapping data, 
+                          closure callback, varargs mixed *args);
+public varargs int select(string table, mapping key,
+                          closure callback, varargs mixed *args);
+public varargs int create_table(string table, mapping *cols,
+                                closure callback, varargs mixed *args);
+public varargs int table_info(string table, 
+                              closure callback, varargs mixed *args);
+
+/**
+ * Setup the SQLiteClient.
+ */
+public void setup() {
+}
 
 /**
  * Connect client to database. This shouldn't need to be done more than once.
@@ -14,7 +33,7 @@ inherit SqlLib;
  * @param  file          sqlite database file
  * @return non-zero for success
  */
-int connect(string file) {
+public int connect(string file) {
   return sl_open(file);
 }
 
@@ -27,8 +46,8 @@ int connect(string file) {
  * @param  args          extra args for the callback
  * @return non-zero to indicate insert request was received
  */
-varargs int insert(string table, mapping data, 
-                   closure callback, varargs mixed *args) {
+public varargs int insert(string table, mapping data, 
+                          closure callback, varargs mixed *args) {
   mixed *params;
   string query = get_insert_statement(table, data, &params);
   mixed result = apply(#'sl_exec, query, params); //'
@@ -46,8 +65,8 @@ varargs int insert(string table, mapping data,
  * @param  args          extra args for the callback
  * @return non-zero to indicate update request was received
  */
-varargs int update(string table, mapping data, 
-                   closure callback, varargs mixed *args) {
+public varargs int update(string table, mapping data, 
+                          closure callback, varargs mixed *args) {
   if (!member(data, SQL_ID_COLUMN)) {
     return 0;
   }
@@ -70,8 +89,8 @@ varargs int update(string table, mapping data,
  * @param  args          extra args for the callback
  * @return non-zero to indicate select request was received
  */
-varargs int select(string table, mapping key,
-                   closure callback, varargs mixed *args) {
+public varargs int select(string table, mapping key,
+                          closure callback, varargs mixed *args) {
   mixed *params;
   string query = get_select_statement(table, key, &params);
   mixed result = apply(#'sl_exec, query, params); //'
@@ -89,8 +108,8 @@ varargs int select(string table, mapping key,
  * @param  args          extra args for the callback
  * @return non-zero to indicate create table request was received
  */
-varargs int create_table(string table, mapping *cols,
-                         closure callback, varargs mixed *args) {
+public varargs int create_table(string table, mapping *cols,
+                                closure callback, varargs mixed *args) {
   string query = get_create_table_statement(table, cols);
   mixed result = apply(#'sl_exec, query); //'
   apply(callback, result, args);
@@ -105,10 +124,17 @@ varargs int create_table(string table, mapping *cols,
  * @param  args          extra args for the callback
  * @return non-zero to indicate table info request was received
  */
-varargs int table_info(string table, 
-                       closure callback, varargs mixed *args) {
+public varargs int table_info(string table, 
+                              closure callback, varargs mixed *args) {
   string query = get_table_info_statement(table);
   mixed result = apply(#'sl_exec, query); //'
   apply(callback, result, args);
   return 1;
+}
+
+/**
+ * Constructor.
+ */
+public void create() {
+  setup();
 }

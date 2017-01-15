@@ -6,16 +6,16 @@
 #pragma no_clone
 
 // ([ regexp : ({ callbacks, ... }) ])
-mapping subscribers;
+private mapping subscribers;
 
-void setup();
-int subscribe(string regexp, closure callback);
-void write_signal(string file, string func);
+public void setup();
+public int subscribe(string regexp, closure callback);
+public void write_signal(string file, string func);
 
 /**
  * Setup the FileTracker.
  */
-void setup() {
+public void setup() {
   subscribers = ([ ]);
 }
 
@@ -26,7 +26,7 @@ void setup() {
  * @param  callback      a callback to run when a match write is triggered
  * @return 0 for failure, 1 for success
  */
-int subscribe(string regexp, closure callback) {
+public int subscribe(string regexp, closure callback) {
   if (!member(subscribers, regexp)) {
     subscribers[regexp] = ({ });
   }
@@ -40,7 +40,7 @@ int subscribe(string regexp, closure callback) {
  * @param  file          the filename being written
  * @param  func          the write operation (see valid_write())
  */
-void write_signal(string file, string func) {
+public void write_signal(string file, string func) {
   object logger = LoggerFactory->get_logger(THISO);
   if (object_name(previous_object()) == MasterObject) {
       string *f = ({ file });
@@ -61,7 +61,7 @@ void write_signal(string file, string func) {
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   setup();
 }
 

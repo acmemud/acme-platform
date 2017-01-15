@@ -6,21 +6,21 @@
  */
 #pragma no_clone
 
-inherit FileLib;
-inherit FlavorLib;
-inherit ObjectLib;
+private inherit FileLib;
+private inherit FlavorLib;
+private inherit ObjectLib;
 
 // ([ str topic_id :  map topic_definition ])
-mapping topics;
+private mapping topics;
 
-void setup();
-public object get_renderer(string topic_id, string term);
-public string get_controller_topic(object controller);
+public void setup();
+public object get_renderer(string topic, string term);
+public string get_topic(object ob);
 
 /**
  * Setup the TopicTracker.
  */
-void setup() {
+public void setup() {
   topics = ([ 
     "system.login" : ([ "renderer" : LoginRenderer ]),
     "system.welcome" : ([ "renderer" : LoginRenderer ]),
@@ -56,7 +56,7 @@ public string get_topic(object ob) {
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   setup();
 }
 

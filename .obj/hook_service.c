@@ -10,6 +10,7 @@
 
 private inherit ObjectLib;
 
+public void setup();
 public void telnet_neg_hook(int action, int option, int *opts);
 public string auto_include_hook(string base_file, string current_file, 
 public varargs mixed uids_hook(string objectname, object blueprint);
@@ -20,6 +21,13 @@ public int create_hook(object ob);
 public int reset_hook(object ob);
 public int clean_up_hook(int ref, object ob);
 private void register_hooks();
+
+/**
+ * Setup the HookService.
+ */
+public void setup() {
+  register_hooks();
+}
 
 /**
  * Telnet negotiation hook. Defer to ConnectionTracker for processing.
@@ -266,5 +274,5 @@ private void register_hooks() {
  * Constructor. Register hooks.
  */
 public void create() {
-  register_hooks();
+  setup();
 }

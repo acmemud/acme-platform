@@ -16,31 +16,55 @@
 #include <sys/debug_info.h>
 
 #ifndef EOTL
-private variables private functions inherit ObjectExpansionLib;
+private inherit ObjectExpansionLib;
 #endif
 
-default private variables;
-
-string zone;
-
-mixed *output;
-
-closure formatter;
-
-string level;
-
+private string zone;
+private mixed *output;
+private closure formatter;
+private string level;
 // ([ program : ([ lines... ]) ])
-mapping muted;
+private mapping muted;
 
-default public functions;
-
-private int check_access();
+public void setup();
+string query_zone();
+int set_zone(string str);
+mixed *query_output();
+int set_output(mixed *arr);
+closure query_formatter();
+int set_formatter(closure cl);
+string query_level();
+int set_level(string str);
 int is_enabled(string priority);
+int is_fatal_enabled();
+int is_error_enabled();
+int is_warn_enabled();
+int is_info_enabled();
+int is_debug_enabled();
+int is_trace_enabled();
+varargs int mute(string program, int line);
+varargs int unmute(string program, int line);
 int is_muted(string program, int line);
-void log(string priority, string message, varargs string *args);
+mapping query_muted();
+private int check_access();
+public void fatal(string msg_fmt, varargs string *args);
+public void error(string msg_fmt, varargs string *args);
+public void warn(string msg_fmt, varargs string *args);
+public void info(string msg_fmt, varargs string *args);
+public void debug(string msg_fmt, varargs string *args);
+public void trace(string msg_fmt, varargs string *args);
+public void log(string priority, string msg_fmt, varargs string *args);
 private void do_output(string msg);
 private mixed *find_caller();
 private string parse_program(string dbg_program);
+
+/**
+ * Setup the Logger.
+ */
+public void setup() {
+  seteuid(0);
+  muted = ([ ]);
+}
 
 /**
  * Get the logger's zone.
@@ -309,7 +333,7 @@ private int check_access() {
  * @param msg_fmt the log message format string
  * @param args    the values to be passed to sprintf() as args
  */
-void fatal(string msg_fmt, varargs string *args) {
+public void fatal(string msg_fmt, varargs string *args) {
   apply(#'log, LVL_FATAL, msg_fmt, args); //'
 }
 
@@ -319,7 +343,7 @@ void fatal(string msg_fmt, varargs string *args) {
  * @param msg_fmt the log message format string
  * @param args    the values to be passed to sprintf() as args
  */
-void error(string msg_fmt, varargs string *args) {
+public void error(string msg_fmt, varargs string *args) {
   apply(#'log, LVL_ERROR, msg_fmt, args); //'
 }
 
@@ -329,7 +353,7 @@ void error(string msg_fmt, varargs string *args) {
  * @param msg_fmt the log message format string
  * @param args    the values to be passed to sprintf() as args
  */
-void warn(string msg_fmt, varargs string *args) {
+public void warn(string msg_fmt, varargs string *args) {
   apply(#'log, LVL_WARN, msg_fmt, args); //'
 }
 
@@ -339,7 +363,7 @@ void warn(string msg_fmt, varargs string *args) {
  * @param msg_fmt the log message format string
  * @param args    the values to be passed to sprintf() as args
  */
-void info(string msg_fmt, varargs string *args) {
+public void info(string msg_fmt, varargs string *args) {
   apply(#'log, LVL_INFO, msg_fmt, args); //'
 }
 
@@ -349,7 +373,7 @@ void info(string msg_fmt, varargs string *args) {
  * @param msg_fmt the log message format string
  * @param args    the values to be passed to sprintf() as args
  */
-void debug(string msg_fmt, varargs string *args) {
+public void debug(string msg_fmt, varargs string *args) {
   apply(#'log, LVL_DEBUG, msg_fmt, args); //'
 }
 
@@ -359,7 +383,7 @@ void debug(string msg_fmt, varargs string *args) {
  * @param msg_fmt the log message format string
  * @param args    the values to be passed to sprintf() as args
  */
-void trace(string msg_fmt, varargs string *args) {
+public void trace(string msg_fmt, varargs string *args) {
   apply(#'log, LVL_TRACE, msg_fmt, args); //'
 }
 
@@ -370,7 +394,7 @@ void trace(string msg_fmt, varargs string *args) {
  * @param msg_fmt  the log message format string
  * @param args     the values to be passed to sprintf() as args
  */
-void log(string priority, string msg_fmt, varargs string *args) {
+public void log(string priority, string msg_fmt, varargs string *args) {
   if (!is_enabled(priority)) {
     return;
   }
@@ -385,11 +409,12 @@ void log(string priority, string msg_fmt, varargs string *args) {
   return;
 }
 
+int logging = 0;
 /**
  * Output the formatted log message to all the configured places.
+ * 
  * @param msg the formatted log message
  */
-int logging = 0;
 private void do_output(string msg) {
   if (logging) { return; }
   logging = 1;
@@ -476,7 +501,6 @@ private string parse_program(string dbg_program) {
   }
 }
 
-void create() {
-  seteuid(0);
-  muted = ([ ]);
+public void create() {
+  setup();
 }

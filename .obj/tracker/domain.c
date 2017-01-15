@@ -8,33 +8,39 @@
 #include <sys/xml.h>
 #include <domain.h>
 
-inherit FileLib;
-inherit DomainLib;
-
-#define DOMAIN_FILE_REGEX     "/\\.etc/\\.domain\\.xml$"
+private inherit FileLib;
+private inherit DomainLib;
 
 // ([ str domain_id : DomainConfig domain ])
-mapping domains;
-
+private mapping domains;
 // ([ str domain_id : ([ string child_id, ... ]) ])
-mapping children;
-
+private mapping children;
 // ([ str domain_root : DomainConfig domain ])
-mapping domain_roots;
+private mapping domain_roots;
 
-void reconfig_signal(string file, string func);
-private struct DomainConfig parse_config(string domain_file);
-private void parse_directive(mixed *tag, struct DomainConfig config,
-                             mixed *read_checker, mixed *write_checker);
-private void parse_configure_access(mixed *tag, mixed *read_checker,
-                                    mixed *write_checker);
-private string get_parent_domain_file(string domain_file);
-private string get_domain_root(string domain_file);
-private int update_domain(struct DomainConfig config);
-private int delete_domain(struct DomainConfig config);
+public void setup();
+public void reconfig_signal(string file, string func);
+protected void parse_directive(mixed *tag, struct DomainConfig config,
+                               mixed *read_checker, mixed *write_checker);
+protected void parse_configure_access(mixed *tag, mixed *read_checker,
+                                      mixed *write_checker);
+protected string get_parent_domain_file(string domain_file);
+protected string get_domain_root(string domain_file);
+protected int update_domain(struct DomainConfig config);
+protected int delete_domain(struct DomainConfig config);
 string query_domain_id(string path);
-struct DomainConfig query_domain(string domain_id);
 mapping query_children(string domain_id);
+public string resolve_sysinclude(string file, string p);
+
+/**
+ * Setup the DomainTracker.
+ */
+public void setup() {
+  FileTracker->subscribe(DOMAIN_FILE_REGEX, #'reconfig_signal); //'
+  domains = ([ ]);
+  children = ([ ]);
+  domain_roots = ([ ]);
+}
 
 /**
  * Called when a domain.xml file is modified or removed.
@@ -42,7 +48,7 @@ mapping query_children(string domain_id);
  * @param file path to domain.xml file
  * @param func write method (see valid_write())
  */
-void reconfig_signal(string file, string func) {
+public void reconfig_signal(string file, string func) {
   object logger = LoggerFactory->get_logger(THISO);
 
   if (file_exists(file)) {
@@ -73,7 +79,7 @@ void reconfig_signal(string file, string func) {
  * @param  domain_file the domain.xml file to parse
  * @return             the parsed domain configuration
  */
-private struct DomainConfig parse_config(string domain_file) {
+protected struct DomainConfig parse_config(string domain_file) {
   object logger = LoggerFactory->get_logger(THISO);
   struct DomainConfig config = (<DomainConfig>);
 
@@ -155,8 +161,8 @@ private struct DomainConfig parse_config(string domain_file) {
  * @param write_checker a partial closure which will be completed with write
  *                      access logic
  */
-private void parse_directive(mixed *tag, struct DomainConfig config,
-                             mixed *read_checker, mixed *write_checker) {
+protected void parse_directive(mixed *tag, struct DomainConfig config,
+                               mixed *read_checker, mixed *write_checker) {
   if (tag[XML_TAG_NAME] == "configureAccess") {
     parse_configure_access(tag, &read_checker, &write_checker);
   }
@@ -172,8 +178,8 @@ private void parse_directive(mixed *tag, struct DomainConfig config,
  * @param write_checker a partial closure which will be completed with write
  *                      access logic
  */
-private void parse_configure_access(mixed *tag, mixed *read_checker,
-                                    mixed *write_checker) {
+protected void parse_configure_access(mixed *tag, mixed *read_checker,
+                                      mixed *write_checker) {
   object logger = LoggerFactory->get_logger(THISO);
 
   // condition blocks for whether to apply this config at all
@@ -317,7 +323,7 @@ private void parse_configure_access(mixed *tag, mixed *read_checker,
  * @param  domain_file the child domain file
  * @return             the parent domain file, or 0
  */
-private string get_parent_domain_file(string domain_file) {
+protected string get_parent_domain_file(string domain_file) {
   string dir = get_domain_root(domain_file);
   while (strlen(dir = dirname(dir))) {
     string file = dir + "/" DOMAIN_FILE;
@@ -334,7 +340,7 @@ private string get_parent_domain_file(string domain_file) {
  * @param  domain_file the path to the domain file
  * @return             the domain root
  */
-private string get_domain_root(string domain_file) {
+protected string get_domain_root(string domain_file) {
   return domain_file[0..<(strlen(DOMAIN_FILE) + 2)];
 }
 
@@ -344,7 +350,7 @@ private string get_domain_root(string domain_file) {
  * @param  config the domain configuration to update
  * @return        1 if confguration was successfully updated, otherwise 0
  */
-private int update_domain(struct DomainConfig config) {
+protected int update_domain(struct DomainConfig config) {
   object logger = LoggerFactory->get_logger(THISO);
   // make sure incoming domain doesn't cause a id collision
   if (member(domains, config->domain_id)) {
@@ -384,7 +390,7 @@ private int update_domain(struct DomainConfig config) {
  * @param  config the domain configuration to delete
  * @return        1 if domain was successfully deleted, otherwise 0
  */
-private int delete_domain(struct DomainConfig config) {
+protected int delete_domain(struct DomainConfig config) {
   object logger = LoggerFactory->get_logger(THISO);
   // make sure deleting subdomain won't cause sibling domain collision
   if (member(children, config->domain_id)) {
@@ -486,7 +492,6 @@ mapping query_children(string domain_id) {
   return copy(children[domain_id]);
 }
 
-
 /**
  * Resolve a sysinclude (<file> style include) for files in a domain. First
  * the domain's .include/ directory will be tried, if no matching file was
@@ -500,7 +505,7 @@ mapping query_children(string domain_id) {
  * @param  p    the compilation unit performing the include
  * @return      the resolved include file
  */
-string resolve_sysinclude(string file, string p) {
+public string resolve_sysinclude(string file, string p) {
   if (p[<15..<1] == " (auto include)") {
     p = p[0..<16];
   }
@@ -543,7 +548,7 @@ string resolve_sysinclude(string file, string p) {
 /**
  * Constructor. Make sure LoggerFactory and FileTracker have been preloaded.
  */
-void create() {
+public void create() {
   // couple sanity checks
   if (!FINDO(LoggerFactory)) {
     destruct(THISO);
@@ -555,8 +560,5 @@ void create() {
     raise_error("FileTracker must be preloaded for DomainTracker to "
                   "function properly\n");
   } 
-  FileTracker->subscribe(DOMAIN_FILE_REGEX, #'reconfig_signal); //'
-  domains = ([ ]);
-  children = ([ ]);
-  domain_roots = ([ ]);
+  setup();
 }

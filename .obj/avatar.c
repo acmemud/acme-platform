@@ -31,7 +31,6 @@ protected string get_default_start_room(string username);
 public void setup() {
   AvatarMixin::setup();
   SoulMixin::setup();
-  return;
 }
 
 /**

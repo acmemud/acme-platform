@@ -9,7 +9,8 @@
 #include <sql.h>
 
 inherit SqlMixin;
-inherit ArrayLib;
+
+private inherit ArrayLib;
 
 #define OBJECT_TABLE    "object"
 #define OBJECT_ID       "object_id"
@@ -21,15 +22,15 @@ inherit ArrayLib;
 #define GIGATICKS       "gigaticks"
 #define TICKS           "ticks"
 
-void setup();
-void new_object(object o);
-void object_destructed(object o);
-string query_object_id(object ob);
+public void setup();
+public void new_object(object o);
+public void object_destructed(object o);
+public string query_object_id(object ob);
 
 /**
  * Setup the ObjectTracker.
  */
-void setup() {
+public void setup() {
   SqlMixin::setup();
   SqlMixin::table_info(OBJECT_TABLE, (:
     if (!$1) {
@@ -61,7 +62,7 @@ void setup() {
  * 
  * @param  o             the object being created
  */
-void new_object(object o) {
+public void new_object(object o) {
   string program_id = ProgramTracker->query_program_id(o);
   mapping odata = ([ 
     OBJECT_ID : query_object_id(o),
@@ -78,7 +79,7 @@ void new_object(object o) {
  * 
  * @param  o             the object being destructed
  */
-void object_destructed(object o) {
+public void object_destructed(object o) {
   mapping odata = ([ 
     SQL_ID_COLUMN : query_object_id(o),
     DESTRUCT_TIME : time(),
@@ -103,7 +104,7 @@ void object_destructed(object o) {
  * @param  ob            the object to get an id for
  * @return the object id
  */
-string query_object_id(object ob) {
+public string query_object_id(object ob) {
   if (clonep(ob)) {
     return sprintf("%s#%d", object_name(ob), object_time(ob));
   } else {
@@ -117,6 +118,6 @@ string query_object_id(object ob) {
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   setup();
 }

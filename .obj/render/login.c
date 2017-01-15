@@ -9,12 +9,12 @@
 
 inherit DefaultRenderer;
  
-inherit RenderLib;
+private inherit RenderLib;
 
-string render(string term, string topic, string message, mapping context, 
-              object sender);
+public string render(string term, string topic, string message, 
+                     mapping context, object sender);
 string render_welcome(string term, string topic, string message, 
-                      mapping context, object sender);
+                       mapping context, object sender);
 
 /**
  * Render a message for a specified term and topic.
@@ -26,8 +26,8 @@ string render_welcome(string term, string topic, string message,
  * @param  sender        the message sender, or 0 for anonymous messages
  * @return the rendered message string to send to the target's terminal
  */
-string render(string term, string topic, string message, mapping context, 
-              object sender) {
+public string render(string term, string topic, string message, 
+                     mapping context, object sender) {
   switch (topic) {
     case TOPIC_WELCOME:
       return render_welcome(term, topic, message, context, sender);
@@ -52,7 +52,7 @@ string render(string term, string topic, string message, mapping context,
  * @return the rendered message string to send to the target's terminal
  */
 string render_welcome(string term, string topic, string message, 
-                      mapping context, object sender) {
+                       mapping context, object sender) {
   if (term == WebClientTerm) {
     return render_json(topic, message, context, sender);
   }

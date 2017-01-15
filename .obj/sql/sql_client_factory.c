@@ -8,7 +8,18 @@
 #include <sql.h>
 
 // ([ str file : obj client ])
-mapping sqlite_clients;
+private mapping sqlite_clients;
+
+public void setup();
+object get_sqlite_client(string file);
+public object get_client(string database);
+
+/**
+ * Setup the SQLClientFactory.
+ */
+public void setup() {
+  sqlite_clients = ([ ]);
+}
 
 /**
  * Get a SQLite client object pointed at the specified database file.
@@ -35,7 +46,7 @@ object get_sqlite_client(string file) {
  * @param  database      database connection string
  * @return the appropriate sql client object
  */
-object get_client(string database) {
+public object get_client(string database) {
   int pos = strstr(database, ":");
   string type = database[0..(pos - 1)];
   database = database[(pos + 1)..];
@@ -53,7 +64,7 @@ object get_client(string database) {
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   load_object(SQLiteClient);
-  sqlite_clients = ([ ]);
+  setup();
 }

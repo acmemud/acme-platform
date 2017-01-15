@@ -6,28 +6,28 @@
 #pragma no_clone
 #include <session.h>
 
-inherit SessionLib;
+private inherit SessionLib;
 
 // program_id#session_count
 // ([ string session_id : SessionInfo session ])
-mapping sessions;
-int session_counter;
+private mapping sessions;
+private int session_counter;
 
-void setup();
-string new_session(string user_id, string supersession_id);
-string query_user(string session_id);
-int is_connected(string session_id);
-int connect_session(string session_id, string connection);
-int disconnect_session(string session_id);
-int resume_session(string session_id);
-int set_avatar(string session_id, object avatar);
-object query_avatar(string session_id);
-string generate_id();
+public void setup();
+public string new_session(string user_id, string supersession_id);
+public string query_user(string session_id);
+public int is_connected(string session_id);
+public int connect_session(string session_id, string connection);
+public int disconnect_session(string session_id);
+public int resume_session(string session_id);
+public int set_avatar(string session_id, object avatar);
+public object query_avatar(string session_id);
+protected string generate_id();
 
 /**
  * Setup the SessionTracker.
  */
-void setup() {
+public void setup() {
   sessions = ([ ]);
 }
 
@@ -38,7 +38,7 @@ void setup() {
  * @param  supersession_id the new session's parent session
  * @return the newly created session id
  */
-string new_session(string user_id, string supersession_id) {
+public string new_session(string user_id, string supersession_id) {
   object logger = LoggerFactory->get_logger(THISO);
   if (supersession_id && !member(sessions, supersession_id)) {
     logger->warn("unable to create session: supersession %O doesn't exist",
@@ -68,7 +68,7 @@ string new_session(string user_id, string supersession_id) {
  * @param  session_id    the session being queried
  * @return the user id who owns the session
  */
-string query_user(string session_id) {
+public string query_user(string session_id) {
   if (member(sessions, session_id)) {
     return sessions[session_id]->user;
   }
@@ -81,7 +81,7 @@ string query_user(string session_id) {
  * @param  session_id    the session id being queried
  * @return 1 if the session is connected, otherwise 0
  */
-int is_connected(string session_id) {
+public int is_connected(string session_id) {
   if (!member(sessions, session_id)) {
     return 0;
   }
@@ -97,7 +97,7 @@ int is_connected(string session_id) {
  * @param  connection    the connection id of the connection using the session
  * @return 1 for success, 0 for failure
  */
-int connect_session(string session_id, string connection) {
+public int connect_session(string session_id, string connection) {
   if (!member(sessions, session_id)) {
     return 0;
   }
@@ -116,7 +116,7 @@ int connect_session(string session_id, string connection) {
  * @param  session_id    the session to disconnect
  * @return 1 for success, 0 for failure
  */
-int disconnect_session(string session_id) {
+public int disconnect_session(string session_id) {
   if (!member(sessions, session_id)) {
     return 0;
   }
@@ -135,7 +135,7 @@ int disconnect_session(string session_id) {
  * @param  session_id    the session to resume
  * @return 1 for success, 0 for failure
  */
-int resume_session(string session_id) {
+public int resume_session(string session_id) {
   if (!member(sessions, session_id)) {
     return 0;
   }
@@ -156,7 +156,7 @@ int resume_session(string session_id) {
  * @param avatar     the avatar for the session
  * @return 1 for success, 0 for failure
  */
-int set_avatar(string session_id, object avatar) {
+public int set_avatar(string session_id, object avatar) {
   if (!member(sessions, session_id)) {
     return 0;
   }
@@ -170,7 +170,7 @@ int set_avatar(string session_id, object avatar) {
  * @param  session_id    the session id being queried
  * @return the session's avatar object
  */
-object query_avatar(string session_id) {
+public object query_avatar(string session_id) {
   if (!member(sessions, session_id)) {
     return 0;
   }
@@ -182,7 +182,7 @@ object query_avatar(string session_id) {
  * 
  * @return the new, unique session id
  */
-string generate_id() {
+protected string generate_id() {
   return sprintf("%s#%d", 
                  ObjectTracker->query_object_id(THISO), ++session_counter);
 }
@@ -190,6 +190,6 @@ string generate_id() {
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   setup();
 }

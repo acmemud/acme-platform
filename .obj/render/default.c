@@ -4,10 +4,10 @@
  * @author devo@eotl
  * @alias DefaultRenderer
  */ 
-inherit RenderLib;
+private inherit RenderLib;
 
-string render(string term, string topic, string message, mapping context, 
-              object sender);
+public string render(string term, string topic, string message, 
+                     mapping context, object sender);
 string render_default(string term, string topic, string message, 
                       mapping context, object sender);
 
@@ -21,8 +21,8 @@ string render_default(string term, string topic, string message,
  * @param  sender        the message sender, or 0 for anonymous messages
  * @return the rendered message string to send to the target's terminal
  */
-string render(string term, string topic, string message, mapping context, 
-              object sender) {
+public string render(string term, string topic, string message, 
+                     mapping context, object sender) {
   return render_default(term, topic, message, context, sender);
 }
 

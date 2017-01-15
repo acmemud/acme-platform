@@ -6,8 +6,16 @@
  */
 private inherit ObjectLib;
 
+public void setup();
 public object reload_tracker(string tracker);
 public void load_trackers();
+
+/**
+ * Setup the TrackerService.
+ */
+public void setup() {
+  load_trackers();
+}
 
 /**
  * Load or reload a specified tracker object.
@@ -43,5 +51,5 @@ public void load_trackers() {
  * Constructor. Load trackers.
  */
 public void create() {
-  load_trackers();
+  setup();
 }

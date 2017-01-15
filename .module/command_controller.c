@@ -37,6 +37,7 @@ struct CommandState {
 
 closure prompt_formatter, fail_formatter;
 
+public void setup();
 public mapping do_command(mixed *command, string verb, string arg);
 mapping process_command(struct CommandState state, closure callback);
 int process_args(struct CommandState state, closure callback);
@@ -64,6 +65,32 @@ int validate(mixed *validations, struct CommandState state, mixed val,
              mixed *field, closure retry_test);
 mapping do_execute(mapping model, string verb);
 public mapping execute(mapping model, string verb);
+
+/**
+ * Setup this command controller.
+ */
+public void setup() {
+  prompt_formatter = parse_format(DEFAULT_PROMPT, ([
+      'm' : ({ 0, "%s", ({ ''message }) }),
+      't' : ({ 0, "%s", ({ ''type }) }),
+      'd' : ({ 0, "%s", ({ 
+               ({ #'?, 
+                  ({ #'stringp, ''default }), 
+                  ({ #'sprintf, 'arg, ''default }),
+                  ""
+               })
+            }) })
+    ]),
+    ({ 'message, 'type, 'default })
+  ); //'
+
+  fail_formatter = parse_format(DEFAULT_FAIL, ([
+      'm' : ({ 0, "%s", ({ ({ #'||, ''message, "" }) }) }),
+      'v' : ({ 0, "%s", ({ ''verb }) })
+    ]),
+    ({ 'message, 'verb })
+  ); //'
+}
 
 /**
  * Run a command. Takes a command definition loaded from a command spec file,
@@ -759,24 +786,5 @@ public mapping execute(mapping model, string verb) {
  * Constructor.
  */
 public void create() {
-  prompt_formatter = parse_format(DEFAULT_PROMPT, ([
-      'm' : ({ 0, "%s", ({ ''message }) }),
-      't' : ({ 0, "%s", ({ ''type }) }),
-      'd' : ({ 0, "%s", ({ 
-               ({ #'?, 
-                  ({ #'stringp, ''default }), 
-                  ({ #'sprintf, 'arg, ''default }),
-                  ""
-               })
-            }) })
-    ]),
-    ({ 'message, 'type, 'default })
-  ); //'
-
-  fail_formatter = parse_format(DEFAULT_FAIL, ([
-      'm' : ({ 0, "%s", ({ ({ #'||, ''message, "" }) }) }),
-      'v' : ({ 0, "%s", ({ ''verb }) })
-    ]),
-    ({ 'message, 'verb })
-  ); //'
+  setup();
 }

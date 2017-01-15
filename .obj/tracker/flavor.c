@@ -9,7 +9,14 @@
 #define DefaultFlavor   "acme-basic"
 #define FlavorAvatar    _ObjDir "/avatar"
 
+public void setup();
 string query_avatar(string flavor, string player_id);
+
+/**
+ * Setup the FlavorTracker.
+ */
+public void setup() {
+}
 
 /**
  * Get the the avatar path for a flavor.
@@ -20,4 +27,11 @@ string query_avatar(string flavor, string player_id);
  */
 string query_avatar(string flavor, string player_id) {
   return FlavorDir "/" + flavor + FlavorAvatar;
+}
+
+/**
+ * Constructor.
+ */
+public void create() {
+  setup();
 }

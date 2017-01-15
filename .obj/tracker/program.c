@@ -9,8 +9,15 @@
 #include <sql.h>
 
 inherit SqlMixin;
-inherit ProgramLib;
-inherit ArrayLib;
+
+private inherit ProgramLib;
+private inherit ArrayLib;
+
+#define PROGRAM_TABLE     "program"
+#define PROGRAM_ID        "program_id"
+#define PROGRAM_NAME      "program_name"
+#define PROGRAM_TIME      "program_time"
+#define PROGRAM_SIZE      "program_size"
 
 // program_id = "program_name#program_time3program_count"
 // ([ str program_id : ProgramInfo info ])
@@ -21,17 +28,11 @@ private mapping program_names;
 private mapping object_map;
 private int program_counter;
 
-#define PROGRAM_TABLE     "program"
-#define PROGRAM_ID        "program_id"
-#define PROGRAM_NAME      "program_name"
-#define PROGRAM_TIME      "program_time"
-#define PROGRAM_SIZE      "program_size"
-
-protected void setup();
-string get_id(string program_name, int program_time, int program_count);
+public void setup();
+protected string get_id(string program_name, int program_time,
+                        int program_count);
 public string new_program(object blueprint);
-public string program_cloned(object clone);  
-public string *query_program_names();
+public string program_cloned(object clone);
 public mapping query_program_ids(string program_name);
 public string query_program_id(object ob);
 public int query_program_count(string id);
@@ -40,7 +41,7 @@ public mapping query_clones(string program_id);
 /**
  * Setup the ProgramTracker.
  */
-protected void setup() {
+public void setup() {
   SqlMixin::setup();
   SqlMixin::table_info(PROGRAM_TABLE, (:
     if (!$1) {
@@ -72,7 +73,8 @@ protected void setup() {
  * @param  program_count the program count
  * @return the program id
  */
-string get_id(string program_name, int program_time, int program_count) {
+protected string get_id(string program_name, int program_time, 
+                        int program_count) {
   return sprintf("%s#%d#%d", program_name, program_time, program_count);
 }
 
@@ -186,7 +188,7 @@ public mapping query_clones(string program_id) {
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   setup();
 }
 

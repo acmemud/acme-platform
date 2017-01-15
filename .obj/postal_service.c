@@ -12,10 +12,18 @@
 private inherit MessageLib;
 private inherit CapabilityLib;
 
+public void setup();
 public varargs struct Message send_message(object target, string topic, 
                                            string message, mapping context, 
                                            object sender);
 public varargs string prompt_message(object target, object sender);
+
+/**
+ * Setup the PostalService.
+ */
+public void setup() {
+
+}
 
 /**
  * Send a message to a sensor object. Target must be a sensor.
@@ -94,4 +102,11 @@ public varargs string prompt_message(object target, object sender) {
 
   efun::tell_object(target, prompt);
   return prompt;
+}
+
+/**
+ * Constructor.
+ */
+public void create() {
+  setup();
 }

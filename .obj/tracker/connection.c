@@ -19,30 +19,29 @@ private mapping connections;
 private mapping interactives;
 private int connection_counter;
 
-string new_connection(object interactive);
-int set_interactive(string connection_id, object interactive);
-object query_interactive(string connection_id);
-int set_session(string connection_id, string session_id);
-string query_connection(object interactive);
-int query_exec_time(string connection_id);
-void telnet_negotiation(object interactive, int cmd, int opt, int *optargs);
-int telnet_get_terminal(object interactive);
-int telnet_get_NAWS(object interactive);
-int telnet_get_ttyloc(object interactive);
-string generate_id();
+public void setup();
+public string new_connection(object interactive);
+public int set_interactive(string connection_id, object interactive);
+public object query_interactive(string connection_id);
+public int set_session(string connection_id, string session_id);
+public string query_connection(object interactive);
+public int query_exec_time(string connection_id);
+public void telnet_negotiation(object interactive, int cmd, int opt,
+                               int *optargs);
+public int telnet_get_terminal(object interactive);
+public int telnet_get_NAWS(object interactive);
+public int telnet_get_ttyloc(object interactive);
+protected string generate_id();
+private void telnet_neg_log(string msg);
 
-#ifdef NEGOTIATION_LOG
-void telnet_neg_log(string s) {
-  object logger = LoggerFactory->get_logger(THISO);
-  logger->debug("%O:%O:%s:%s:%s\n",
-    previous_object(), 
-    THISP,
-    stringp(query_ip_name(THISP)) ? query_ip_name(THISP) : "NOHOST",
-    stringp(query_ip_number(THISP)) ? query_ip_number(THISP) : "NOIP",
-    s
-  ); 
+/**
+ * Setup the ConnectionTracker.
+ */
+public void setup() {
+  connections = ([ ]);
+  interactives = ([ ]);
+  connection_counter = 0;
 }
-#endif
 
 /**
  * Invoked when a new connection is established with the interactive object
@@ -51,7 +50,7 @@ void telnet_neg_log(string s) {
  * @param  interactive   the connected object
  * @return the newly tracked connection id
  */
-string new_connection(object interactive) {
+public string new_connection(object interactive) {
   if (!interactive(interactive)) {
     raise_error(sprintf(
       "new_connection() of non-interactive: %O", 
@@ -82,7 +81,7 @@ string new_connection(object interactive) {
  * @param interactive   the interactive object for the connection
  * @return 0 for failure, 1 for success
  */
-int set_interactive(string connection_id, object interactive) {
+public int set_interactive(string connection_id, object interactive) {
   if (!interactive(interactive)) {
     return 0;
   }
@@ -100,7 +99,7 @@ int set_interactive(string connection_id, object interactive) {
  * @param  connection_id the connection to query
  * @return the interactive object for the connection
  */
-object query_interactive(string connection_id) {
+public object query_interactive(string connection_id) {
   if (!member(connections, connection_id)) {
     return 0;
   }
@@ -114,7 +113,7 @@ object query_interactive(string connection_id) {
  * @param session_id    the session id for the connection
  * @return 0 for failure, 1 for success
  */
-int set_session(string connection_id, string session_id) {
+public int set_session(string connection_id, string session_id) {
   if (!member(connections, connection_id)) {
     return 0;
   }
@@ -128,7 +127,7 @@ int set_session(string connection_id, string session_id) {
  * @param  interactive   the connected interactive
  * @return the connection id of the interactive
  */
-string query_connection(object interactive) {
+public string query_connection(object interactive) {
   if (!member(interactives, interactive)) {
     return 0;
   }
@@ -142,7 +141,7 @@ string query_connection(object interactive) {
  * @return the time of the last exec operation for the connect (the last time
  *         the interactive was changed)
  */
-int query_exec_time(string connection_id) {
+public int query_exec_time(string connection_id) {
   if (!member(connections, connection_id)) {
     return 0;
   }
@@ -157,7 +156,8 @@ int query_exec_time(string connection_id) {
  * @param  opt           negotation option
  * @param  optargs       extra args to the negotation
  */
-void telnet_negotiation(object interactive, int cmd, int opt, int *optargs) {
+public void telnet_negotiation(object interactive, int cmd, int opt, 
+                               int *optargs) {
   if (previous_object() != FINDO(HookService)) {
     return;
   }
@@ -269,7 +269,7 @@ void telnet_negotiation(object interactive, int cmd, int opt, int *optargs) {
  * @param  interactive   the interactive for which to update terminal type
  * @return 0 for failure, 1 for success
  */
-int telnet_get_terminal(object interactive) {
+public int telnet_get_terminal(object interactive) {
   string connection_id = query_connection(interactive);
   if (!connection_id) {
     return 0;
@@ -291,7 +291,7 @@ int telnet_get_terminal(object interactive) {
  * @param  interactive   the interactive for which to update NAWS
  * @return 0 for failure, 1 for success
  */
-int telnet_get_NAWS(object interactive) {
+public int telnet_get_NAWS(object interactive) {
   string connection_id = query_connection(interactive);
   if (!connection_id) {
     return 0;
@@ -312,7 +312,7 @@ int telnet_get_NAWS(object interactive) {
  * @param  interactive   the interactive for which to update tty location
  * @return 0 for failure, 1 for success
  */
-int telnet_get_ttyloc(object interactive) {
+public int telnet_get_ttyloc(object interactive) {
   string connection_id = query_connection(interactive);
   if (!connection_id) {
     return 0;
@@ -332,16 +332,32 @@ int telnet_get_ttyloc(object interactive) {
  * 
  * @return the connection id
  */
-string generate_id() {
+protected string generate_id() {
   return sprintf("%s#%d", 
                  ObjectTracker->query_object_id(THISO), ++connection_counter);
 }
 
+#ifdef NEGOTIATION_LOG
+/**
+ * Negotiation log.
+ * 
+ * @param  msg           the log message
+ */
+private void telnet_neg_log(string msg) {
+  object logger = LoggerFactory->get_logger(THISO);
+  logger->debug("%O:%O:%s:%s:%s\n",
+    previous_object(), 
+    THISP,
+    stringp(query_ip_name(THISP)) ? query_ip_name(THISP) : "NOHOST",
+    stringp(query_ip_number(THISP)) ? query_ip_number(THISP) : "NOIP",
+    msg
+  ); 
+}
+#endif
+
 /**
  * Constructor.
  */
-void create() {
-  connections = ([ ]);
-  interactives = ([ ]);
-  connection_counter = 0;
+public void create() {
+  setup();
 }
