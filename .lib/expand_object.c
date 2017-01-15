@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias ObjectExpansionLib
  */
+#pragma no_clone
 #include <expand_object.h>
 
 private inherit ArrayLib;

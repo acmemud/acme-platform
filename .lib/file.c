@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias FileLib
  */
+#pragma no_clone
 #include <sys/files.h>
 
 // TODO need to clean up old patterns periodically

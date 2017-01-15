@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias CapabilityLib
  */
+#pragma no_clone
 
 protected int is_capable(object ob, string cap);
 

@@ -4,15 +4,18 @@
  * @author devo@eotl
  * @alias SqlMixin
  */
+#pragma no_clone
 #include <sql.h>
 
+private int enabled;
 // TODO expand interface to support objects that use more than one db
 private string database;
 
 public void setup();
+public void teardown();
+int has_sql();
 int set_database(string db);
 string query_database();
-int has_sql();
 protected varargs int insert(string table, mapping data, 
                              closure callback, varargs mixed *args);
 protected varargs int update(string table, mapping data, 
@@ -30,6 +33,21 @@ protected varargs int table_info(string table,
 public void setup() {
   load_object(SqlClientFactory);
   database = DEFAULT_DATABASE;
+  enabled = 1;
+}
+
+/**
+ * Tear down the SQLMixin.
+ */
+public void teardown() {
+  enabled = 0;
+}
+
+/**
+ * Return true to indicate this object is using a SQL connection.
+ */
+int has_sql() {
+  return enabled;
 }
 
 /**
@@ -50,13 +68,6 @@ int set_database(string db) {
  */
 string query_database() {
   return database;
-}
-
-/**
- * Return true to indicate this object is using a SQL connection.
- */
-int has_sql() {
-  return 1;
 }
 
 /**

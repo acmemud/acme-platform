@@ -5,6 +5,7 @@
  * @author devo@eotl
  * @alias MessageLib
  */
+#pragma no_clone
 #include <sys/strings.h>
 #include <message.h>
 #include <topic.h>

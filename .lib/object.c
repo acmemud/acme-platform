@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias ObjectLib
  */
+#pragma no_clone
 #include <sys/files.h>
 #include <sys/inherit_list.h>
 #include <sys/functionlist.h>

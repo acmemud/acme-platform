@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias PlayerLib
  */
+#pragma no_clone
 
 struct PlayerInfo {
   string id;

@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias ArrayLib
  */
+#pragma no_clone
 
 protected varargs int searcha(mixed list, mixed el, int start, int step);
 protected varargs int anti_searcha(mixed list, mixed el, int start, int step);

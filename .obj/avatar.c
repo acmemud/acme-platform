@@ -102,8 +102,14 @@ public mixed *try_descend(string session_id) {
                          user_id, session_id)
       ));
     }
-    SessionTracker->set_avatar(subsession_id, avatar);
   }
+  if (!avatar->is_avatar()) {
+    throw((<Exception> 
+      message: sprintf("session avatar doesn't identify as avatar: %O %O", 
+                       subsession_id, avatar)
+    ));
+  }
+  SessionTracker->set_avatar(subsession_id, avatar);
 
   // avatar->try_descend
   mixed *args, ex;
@@ -147,8 +153,10 @@ public void on_descend(string session_id, string subsession_id,
                    player_id, subsession_id);
       return;
     }
-    apply(#'call_other, avatar, "on_descend", 
-          subsession_id, player_id, room, args);
+    if (avatar->is_avatar()) {
+      apply(#'call_other, avatar, "on_descend", 
+            subsession_id, player_id, room, args);
+    }
   }
 
   return;

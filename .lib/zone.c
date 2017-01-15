@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias ZoneLib
  */
+#pragma no_clone
 #include <zone.h>
 #include <object.h>
 

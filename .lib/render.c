@@ -4,6 +4,8 @@
  * @author devo@eotl
  * @alias RenderLib
  */
+#pragma no_clone
+
 private inherit JSONLib;
 
 protected string render_json(string topic, string message, mapping context, 

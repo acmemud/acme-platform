@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias ArgumentLib
  */
+#pragma no_clone
 #include <argument.h>
 
 private inherit StringLib;

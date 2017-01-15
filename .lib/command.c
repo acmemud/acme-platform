@@ -3,6 +3,7 @@
  *
  * @alias CommandLib
  */
+#pragma no_clone
 #include <sys/regexp.h>
 #include <command.h>
 

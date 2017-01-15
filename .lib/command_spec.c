@@ -4,6 +4,7 @@
  * @author devo
  * @alias CommandSpecLib
  */
+#pragma no_clone
 #include <sys/xml.h>
 #include <command_spec.h>
 #include <command.h>

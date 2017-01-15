@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias ValidationLib
  */
+#pragma no_clone
 private inherit UserLib;
 
 public int validate_max_length(mixed arg, mixed len);

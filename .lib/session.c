@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias SessionLib
  */
+#pragma no_clone
 #include <session.h>
 
 struct ConnectedSessionInfo {

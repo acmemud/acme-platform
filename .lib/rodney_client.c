@@ -9,6 +9,7 @@
  *
  * @alias RodneyClientLib
  */
+#pragma no_clone
 #include <sys/erq.h>
 #include <sys/tls.h>
 #include <sys/config.h>

@@ -6,6 +6,7 @@
  * @author devo@eotl
  * @alias SensorMixin
  */
+#pragma no_clone
 #include <capability.h>
 #include <command_giver.h>
 #include <message.h>
@@ -18,19 +19,50 @@ private inherit ObjectLib;
 private mapping CAPABILITIES_VAR = ([ CAP_SENSOR ]);
 private mapping CMD_IMPORTS_VAR = ([ ]);
 
+private int enabled;
+
 public void setup();
+public void teardown();
+int is_sensor();
+string query_terminal_type();
 public mixed *try_message(string topic, string message, mapping context, 
                           object sender);
 public struct Message render_message(string topic, string message, 
                                      mapping context, object sender);
 public void on_message(struct Message msg);
-string query_terminal_type();
-int is_sensor();
 
 /**
  * Setup the SensorMixin.
  */
 public void setup() {
+  enabled = 1;
+}
+
+/**
+ * Tear down the SensorMixin.
+ */
+public void teardown() {
+  enabled = 0;
+}
+
+/**
+ * Return true to indicate this object is a sensor.
+ * 
+ * @return 1
+ */
+int is_sensor() {
+  return enabled;
+}
+
+/**
+ * Get the terminal type of this sensor. Returns a reasonable default at the
+ * base implementation, but my be overridden by avatars to get from connection
+ * info instead.
+ * 
+ * @return the default terminal type
+ */
+string query_terminal_type() {
+  return DEFAULT_TERMINAL_TYPE;
 }
 
 /**
@@ -88,22 +120,3 @@ public void on_message(struct Message msg) {
   return;
 }
 
-/**
- * Get the terminal type of this sensor. Returns a reasonable default at the
- * base implementation, but my be overridden by avatars to get from connection
- * info instead.
- * 
- * @return the default terminal type
- */
-string query_terminal_type() {
-  return DEFAULT_TERMINAL_TYPE;
-}
-
-/**
- * Return true to indicate this object is a sensor.
- * 
- * @return 1
- */
-int is_sensor() {
-  return 1;
-}

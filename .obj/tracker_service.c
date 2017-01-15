@@ -4,6 +4,8 @@
  * @author devo@eotl
  * @alias TrackerService
  */
+#pragma no_clone
+
 private inherit ObjectLib;
 
 public void setup();

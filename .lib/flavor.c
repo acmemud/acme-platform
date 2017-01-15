@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias FlavorLib
  */
+#pragma no_clone
 
 protected string get_flavor(object ob);
 

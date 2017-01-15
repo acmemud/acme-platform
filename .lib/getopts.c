@@ -6,6 +6,7 @@
  * @author devo@eotl
  * @alias GetoptsLib
  */
+#pragma no_clone
 
 protected mixed *getopts(string *args, string validopts);
 protected mixed *getopts_long(string *args, string validopts, 

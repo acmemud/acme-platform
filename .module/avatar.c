@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias AvatarMixin
  */
+#pragma no_clone
 #include <capability.h>
 #include <command_giver.h>
 
@@ -17,19 +18,21 @@ private inherit ExceptionLib;
 private mapping CAPABILITIES_VAR = ([ CAP_AVATAR ]);
 private string CMD_IMPORTS_VAR = PlatformBinDir "/avatar/avatar.cmds";
 
+private int enabled;
 private string master_session;
 private mapping slave_sessions;
 
 public void setup();
-public mixed *try_descend(string session_id);
-public void on_descend(string session_id);
+public void teardown();
+int is_avatar();
 int set_master_session(string session_id);
 string query_master_session();
 int add_slave_session(string session_id);
 int remove_slave_session(string session_id);
 mapping query_slave_sessions();
 string query_username();
-int is_avatar();
+public mixed *try_descend(string session_id);
+public void on_descend(string session_id);
 
 /**
  * Setup the AvatarMixin.
@@ -40,53 +43,23 @@ public void setup() {
   ShellMixin::setup();
   master_session = 0;
   slave_sessions = ([ ]);
+  enabled = 1;
 }
 
 /**
- * This function is called when a new session is created for this avatar,
- * and the creating object wants to "descend" their consciousness into the
- * new session. It can prevent the descension from happening, or otherwise
- * prepare for the descension that's about to take place. The try_descend() 
- * implementation at the core level does nothing but return an empty array to
- * ensure compabitility.
- * 
- * @param  session_id    the session to which this avatar is attached
- * @return extra args to be passed to on_descend():
- * @throws Exception     if something goes wrong to prevent descention
+ * Tear down the AvatarMixin.
  */
-public mixed *try_descend(string session_id) {
-  return ({ });
+public void teardown() {
+  enabled = 0;
 }
 
 /**
- * Called upon a successful "descension". Descension and ascension are the 
- * processes by which multiple avatars are linked together across sessions. 
- * Descension establishes these links, and ascension removes them. A connected 
- * avatar need not necessarily itself be interactive, but may be linked to at 
- * least one other session whose avatar is interactive. The primary job of 
- * AvatarMixin's core on_descend() function store the session for reference and
- * configure the other mixins. The master session will be updated if the new
- * session belongs to the same user, otherwise a slave session will be added.
- * 
- * @param  session_id    the session this avatar has been bound to, it will be
- *                       running if it wasn't already prior to descension
+ * Returns true to designate that this object represents an avatar.
+ *
+ * @return 1
  */
-public void on_descend(string session_id) {
-  if (master_session) {
-    string master_user = SessionTracker->query_user(master_session);
-    string user = SessionTracker->query_user(session_id);
-    string username = UserTracker->query_username(user);
-    if (UserTracker->query_username(master_user) == username) {
-      add_slave_session(master_session);
-      set_master_session(session_id);
-    } else {
-      add_slave_session(session_id);
-    }
-  } else {
-    set_master_session(session_id);
-  }
-  set_homedir(UserDir "/" + query_username());
-  set_cwd(query_homedir());
+int is_avatar() {
+  return enabled;
 }
 
 /**
@@ -167,10 +140,49 @@ string query_terminal_type() {
 }
 
 /**
- * Returns true to designate that this object represents an avatar.
- *
- * @return 1
+ * This function is called when a new session is created for this avatar,
+ * and the creating object wants to "descend" their consciousness into the
+ * new session. It can prevent the descension from happening, or otherwise
+ * prepare for the descension that's about to take place. The try_descend() 
+ * implementation at the core level does nothing but return an empty array to
+ * ensure compabitility.
+ * 
+ * @param  session_id    the session to which this avatar is attached
+ * @return extra args to be passed to on_descend():
+ * @throws Exception     if something goes wrong to prevent descention
  */
-int is_avatar() {
-  return 1;
+public mixed *try_descend(string session_id) {
+  return ({ });
 }
+
+/**
+ * Called upon a successful "descension". Descension and ascension are the 
+ * processes by which multiple avatars are linked together across sessions. 
+ * Descension establishes these links, and ascension removes them. A connected 
+ * avatar need not necessarily itself be interactive, but may be linked to at 
+ * least one other session whose avatar is interactive. The primary job of 
+ * AvatarMixin's core on_descend() function store the session for reference and
+ * configure the other mixins. The master session will be updated if the new
+ * session belongs to the same user, otherwise a slave session will be added.
+ * 
+ * @param  session_id    the session this avatar has been bound to, it will be
+ *                       running if it wasn't already prior to descension
+ */
+public void on_descend(string session_id) {
+  if (master_session) {
+    string master_user = SessionTracker->query_user(master_session);
+    string user = SessionTracker->query_user(session_id);
+    string username = UserTracker->query_username(user);
+    if (UserTracker->query_username(master_user) == username) {
+      add_slave_session(master_session);
+      set_master_session(session_id);
+    } else {
+      add_slave_session(session_id);
+    }
+  } else {
+    set_master_session(session_id);
+  }
+  set_homedir(UserDir "/" + query_username());
+  set_cwd(query_homedir());
+}
+

@@ -28,6 +28,7 @@
  *
  * @alias PropertyMixin
  */
+#pragma no_clone
 #include <property.h>
 #include <capability.h>
 
@@ -42,6 +43,7 @@ private mapping saved_prop_values;
 private nosave mapping masks;
 
 public void setup();
+public void teardown();
 varargs int init_prop(string prop, int flags, mixed method);
 varargs int configure_prop(string prop, int flags, mixed method);
 mixed query_prop(string prop);
@@ -66,6 +68,12 @@ private int run_mask(mixed mask, string prop, mixed value);
  */
 public void setup() {
   check_vars();
+}
+
+/**
+ * Tear down PropertyMixin.
+ */
+public void teardown() {
 }
 
 /**

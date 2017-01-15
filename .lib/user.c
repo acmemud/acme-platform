@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias UserLib
  */
+#pragma no_clone
 #include <user.h>
 
 private inherit FileLib;
@@ -209,8 +210,13 @@ protected string attach_session(object interactive, string user_id) {
       logger->warn("failed to clone platform avatar: %O", user_id);
       return 0;
     }
-    SessionTracker->set_avatar(session_id, avatar);
   }
+  if (!avatar->is_avatar()) {
+    logger->warn("session avatar doesn't identify as avatar: %O %O", 
+                 session_id, avatar);
+    return 0;
+  }
+  SessionTracker->set_avatar(session_id, avatar);
 
   mixed *args, ex;
   if (ex = catch(args = avatar->try_descend(session_id); publish)) {

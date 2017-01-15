@@ -6,6 +6,7 @@
  * @author devo@eotl
  * @alias PostalService
  */
+#pragma no_clone
 #include <message.h>
 #include <capability.h>
 
@@ -22,7 +23,6 @@ public varargs string prompt_message(object target, object sender);
  * Setup the PostalService.
  */
 public void setup() {
-
 }
 
 /**
@@ -48,7 +48,7 @@ public varargs struct Message send_message(object target, string topic,
     context = ([ ]);
   }
   
-  if (!is_capable(target, CAP_SENSOR)) {
+  if (!target->is_sensor()) {
     return 0;
   }
 

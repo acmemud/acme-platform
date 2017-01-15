@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias AccessLib
  */
+#pragma no_clone
 #include <access.h>
 
 /**

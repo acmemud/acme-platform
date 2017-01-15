@@ -4,6 +4,7 @@
  *
  * @alias JSONLib
  */
+#pragma no_clone
 
 /**
  * json.c

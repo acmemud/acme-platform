@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias LanguageService
  */
+#pragma no_clone
 
 // ([ str language_id :  map language_definition ])
 private mapping languages;

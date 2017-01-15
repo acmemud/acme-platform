@@ -8,11 +8,14 @@
 #include <command.h>
 
 inherit CommandController;
-
-inherit CommandLib;
-inherit MessageLib;
 inherit ValidationLib;
-inherit UserLib;
+
+private inherit CommandLib;
+private inherit MessageLib;
+private inherit UserLib;
+
+public mapping execute(mapping model, string verb);
+public int validate_passwords_match(mapping model);
 
 /**
  * Execute the register command. First creates the user, then starts a new
@@ -23,7 +26,7 @@ inherit UserLib;
  * @return an output model containing input username, new user id, and new 
  *         session id
  */
-mapping execute(mapping model, string verb) {
+public mapping execute(mapping model, string verb) {
   mapping result = ([
     "username" : model["username"],
   ]);
@@ -59,6 +62,6 @@ mapping execute(mapping model, string verb) {
  * @param  model         the command model
  * @return 1 if passwords match, otherwise 0
  */
-int validate_passwords_match(mapping model) {
+public int validate_passwords_match(mapping model) {
   return model["password"] == model["confirmPassword"];
 }

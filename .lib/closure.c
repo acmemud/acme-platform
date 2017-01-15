@@ -4,6 +4,7 @@
  * @author devo
  * @alias ClosureLib
  */
+#pragma no_clone
 
 /**
  * Internal function to recurse through nested arrays of a lambda closure.

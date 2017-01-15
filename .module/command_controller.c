@@ -8,6 +8,7 @@
  *
  * @alias CommandController
  */
+#pragma no_clone
 #include <sys/strings.h>
 #include <sys/input_to.h>
 #include <command.h>
@@ -38,6 +39,7 @@ struct CommandState {
 closure prompt_formatter, fail_formatter;
 
 public void setup();
+public void teardown();
 public mapping do_command(mixed *command, string verb, string arg);
 mapping process_command(struct CommandState state, closure callback);
 int process_args(struct CommandState state, closure callback);
@@ -90,6 +92,13 @@ public void setup() {
     ]),
     ({ 'message, 'verb })
   ); //'
+}
+
+/**
+ * Tear down this CommandController.
+ */
+public void teardown() {
+
 }
 
 /**

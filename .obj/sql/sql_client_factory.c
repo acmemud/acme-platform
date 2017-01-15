@@ -5,6 +5,7 @@
  * @author devo@eotl
  * @alias SqlClientFactory
  */
+#pragma no_clone
 #include <sql.h>
 
 // ([ str file : obj client ])

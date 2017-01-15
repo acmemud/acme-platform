@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias CommandGiverMixin
  */
+#pragma no_clone
 #include <sys/functionlist.h>
 #include <capability.h>
 #include <command_giver.h>
@@ -18,9 +19,11 @@ private mapping CAPABILITIES_VAR = ([ CAP_COMMAND_GIVER ]);
 private string CMD_IMPORTS_VAR = 
   PlatformBinDir "/command_giver/command_giver.cmds";
 
+private int enabled;
 private nosave mixed *commands;
 
 public void setup();
+public void teardown();
 int is_command_giver();
 mixed *load_cmd_imports();
 public int do_command(string arg);
@@ -34,6 +37,14 @@ public void setup() {
   object logger = LoggerFactory->get_logger(THISO);
   commands = load_cmd_imports();
   //logger->info("commands: %O\n", commands);
+  enabled = 1;
+}
+
+/**
+ * Tear down the CommandGiverMixin.
+ */
+public void teardown() {
+  enabled = 0;
 }
 
 /**
@@ -42,7 +53,7 @@ public void setup() {
  * @return 1 to indicate object is a command giver
  */
 int is_command_giver() {
-  return 1;
+  return enabled;
 }
 
 /**

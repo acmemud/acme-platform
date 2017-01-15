@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias SqlLib
  */
+#pragma no_clone
 #include <sys/lpctypes.h>
 #include <sql.h>
 

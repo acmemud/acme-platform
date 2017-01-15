@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias HookService
  */
+#pragma no_clone
 #include <sys/driver_hook.h>
 #include <object.h>
 #include <sql.h>
@@ -79,7 +80,10 @@ public varargs mixed uids_hook(string objectname, object blueprint) {
  * @return 1 if command was found and executed, otherwise 0
  */
 public int command_hook(string command, object command_giver) {
-  return command_giver->do_command(command);
+  if (command_giver->is_command_giver()) {
+    return command_giver->do_command(command);
+  }
+  return 0;
 }
 
 /**

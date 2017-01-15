@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias ConnectionLib
  */
+#pragma no_clone
 #include <capability.h>
 #include <command_giver.h>
 #include <connection.h>
@@ -50,7 +51,7 @@ protected int connect_session(object who, string session) {
     logger->debug("no avatar attached to session: %O %O", session, who);
     return 0;
   }
-  if (!is_capable(avatar, CAP_AVATAR)) {
+  if (!avatar->is_avatar()) {
     logger->debug("attempting to connect a non-avatar: %O %O", avatar, who);
     return 0;
   }
@@ -141,7 +142,7 @@ protected varargs void restore_prompt(object ob) {
   if (!ob) {
     ob = THISO;
   }
-  if (is_capable(ob, CAP_SHELL)) {
+  if (ob->has_shell()) {
     set_prompt(lambda(0,
       ({ #'+,
         ({ #'call_other, ob, "query_context" }),

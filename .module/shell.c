@@ -15,9 +15,12 @@ private inherit FileLib;
 private mapping CAPABILITIES_VAR = ([ CAP_SHELL ]);
 private string CMD_IMPORTS_VAR = PlatformBinDir "/shell/shell.cmds";
 
+private int enabled;
 private string cwd, homedir, *dirstack, context;
 
 public void setup();
+public void teardown();
+int has_shell();
 string query_cwd();
 int set_cwd(string dir);
 string *query_dirs();
@@ -35,6 +38,23 @@ int set_context(string c);
 public void setup() {
   dirstack = ({ });
   context = "";
+  enabled = 1;
+}
+
+/**
+ * Tear down the ShellMixin.
+ */
+public void teardown() {
+  enabled = 0;
+}
+
+/**
+ * Return true to indicate the user has a shell.
+ * 
+ * @return 1
+ */
+int has_shell() {
+  return enabled;
 }
 
 /**
@@ -147,14 +167,5 @@ int set_context(string c) {
     return 0;
   }
   context = c;
-  return 1;
-}
-
-/**
- * Return true to indicate this object has a shell.
- * 
- * @return 1
- */
-int has_shell() {
   return 1;
 }

@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias EnglishLib
  */
+#pragma no_clone
 
 protected string objective(object what);
 

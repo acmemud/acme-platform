@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias DomainLib
  */
+#pragma no_clone
 #include <domain.h>
 
 struct DomainConfig {

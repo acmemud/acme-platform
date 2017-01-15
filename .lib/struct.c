@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias StructLib
  */
+#pragma no_clone
 
 private nosave mapping setters = ([ ]);
 private nosave mapping getters = ([ ]);

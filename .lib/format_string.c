@@ -4,6 +4,7 @@
  * @author devo
  * @alias FormatStringLib
  */
+#pragma no_clone
 #include <sys/debug_info.h>
 #include <format_string.h>
 

@@ -4,6 +4,7 @@
  * @author devo
  * @alias StringLib
  */
+#pragma no_clone
 #include <string.h>
 
 private inherit ArrayLib;
