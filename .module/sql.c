@@ -1,16 +1,18 @@
 /**
- *
+ * Lets objects make SQL queries. Mostly here to keep track of connection info.
+ * 
  * @author devo@eotl
  * @alias SqlMixin
  */
 #include <sql.h>
 
 // TODO expand interface to support objects that use more than one db
-string database;
+private string database;
 
-protected void setup();
+public void setup();
 int set_database(string db);
 string query_database();
+int has_sql();
 protected varargs int insert(string table, mapping data, 
                              closure callback, varargs mixed *args);
 protected varargs int update(string table, mapping data, 
@@ -25,7 +27,7 @@ protected varargs int table_info(string table,
 /**
  * Setup the SQLMixin.
  */
-protected void setup() {
+public void setup() {
   load_object(SqlClientFactory);
   database = DEFAULT_DATABASE;
 }
@@ -48,6 +50,13 @@ int set_database(string db) {
  */
 string query_database() {
   return database;
+}
+
+/**
+ * Return true to indicate this object is using a SQL connection.
+ */
+int has_sql() {
+  return 1;
 }
 
 /**

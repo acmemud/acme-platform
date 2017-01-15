@@ -10,27 +10,30 @@
 #include <login.h>
 #include <sensor.h>
 
-inherit CommandGiverMixin;
-inherit SensorMixin;
+virtual inherit CommandGiverMixin;
+virtual inherit SensorMixin;
 
-inherit ConnectionLib;
-inherit MessageLib;
-inherit ObjectLib;
+private inherit ConnectionLib;
+private inherit MessageLib;
+private inherit ObjectLib;
 
 private string CMD_IMPORTS_VAR = PlatformBinDir "/login.cmds";
 
-protected void setup();
+public void setup();
 protected void connect();
-protected varargs void suppress_prompt(string arg);
+public varargs void suppress_prompt(string arg);
 protected varargs void get_terminal_type(closure callback, int retry);
-protected void welcome(string terminal, int is_default);
+protected void welcome(string terminal, mixed is_default);
+protected void attempt_timeout();
 protected void timeout();
 protected void abort();
+public int logon();
+public void heart_beat();
 
 /**
  * Setup login object.
  */
-protected void setup() {
+public void setup() {
   CommandGiverMixin::setup();
   SensorMixin::setup();
 }
@@ -54,7 +57,7 @@ protected void connect() {
  * 
  * @param  arg           discarded user input
  */
-protected varargs void suppress_prompt(string arg) {
+public varargs void suppress_prompt(string arg) {
   remove_input_to(THISO);
   input_to("suppress_prompt", INPUT_NOECHO|INPUT_CHARMODE|INPUT_IGNORE_BANG);
   return;

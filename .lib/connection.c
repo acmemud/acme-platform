@@ -8,7 +8,7 @@
 #include <command_giver.h>
 #include <connection.h>
 
-inherit CapabilityLib;
+private inherit CapabilityLib;
 
 struct ConnectionInfo {
   string id;
@@ -28,6 +28,12 @@ struct ConnectionState {
   string session;
 };
 
+protected int connect_session(object who, string session);
+protected int query_screen_width(object ob);
+protected int query_screen_length(object ob);
+protected varargs string query_terminal_type(object ob);
+protected varargs void restore_prompt(object ob);
+
 /**
  * Connect an existing interactive object to a new session. This will exec them
  * into the session avatar and update their connection info accordingly. The
@@ -37,7 +43,7 @@ struct ConnectionState {
  * @param  session       a session to connect them to
  * @return 1 for success, 0 for failure
  */
-int connect_session(object who, string session) {
+protected int connect_session(object who, string session) {
   object logger = LoggerFactory->get_logger(THISO);
   object avatar = SessionTracker->query_avatar(session);
   if (!avatar) {
@@ -70,7 +76,7 @@ int connect_session(object who, string session) {
  * @param  ob            the connected object, defaults to THISO
  * @return the screen width
  */
-public int query_screen_width(object ob) {
+protected int query_screen_width(object ob) {
   if (!ob) {
     ob = THISO;
   }
@@ -91,7 +97,7 @@ public int query_screen_width(object ob) {
  * @param  ob            the connected object, defaults to THISO
  * @return the screen length
  */
-public int query_screen_length(object ob) {
+protected int query_screen_length(object ob) {
   if (!ob) {
     ob = THISO;
   }
@@ -112,7 +118,7 @@ public int query_screen_length(object ob) {
  * @param  ob            the connected object, defaults to THISO
  * @return the terminal type
  */
-public varargs string query_terminal_type(object ob) {
+protected varargs string query_terminal_type(object ob) {
   if (!ob) {
     ob = THISO;
   }
@@ -131,7 +137,7 @@ public varargs string query_terminal_type(object ob) {
  * 
  * @param  ob            the connected object, defaults to THISO
  */
-public varargs void restore_prompt(object ob) {
+protected varargs void restore_prompt(object ob) {
   if (!ob) {
     ob = THISO;
   }

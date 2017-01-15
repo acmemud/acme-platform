@@ -4,7 +4,10 @@
  * @author devo@eotl
  * @alias RenderLib
  */
-inherit JSONLib;
+private inherit JSONLib;
+
+protected string render_json(string topic, string message, mapping context, 
+                             object sender);
 
 /**
  * Render a message and its context to a JSON string.
@@ -15,8 +18,8 @@ inherit JSONLib;
  * @param  sender        the sender object
  * @return the rendered JSON string
  */
-string render_json(string topic, string message, mapping context, 
-                   object sender) {
+protected string render_json(string topic, string message, mapping context, 
+                             object sender) {
   return json_encode(([
     "topic": topic,
     "message": message,

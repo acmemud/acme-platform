@@ -12,6 +12,7 @@
 #include <sys/erq.h>
 #include <sys/tls.h>
 #include <sys/config.h>
+#include <rodney_client.h>
 
 #ifdef EOTL
 #include <acme.h>
@@ -21,23 +22,10 @@
 #ifdef EOTL
 private variables private functions inherit "json";
 #else
-private variables private functions inherit JSONLib;
+private inherit JSONLib;
 #endif
 
 // TODO better error recovery
-
-#define HOST ({ 66, 220, 23, 27 })
-//#define HOST ({ 127, 0, 0, 1 })
-#define PORT 2080
-
-#define OUT_SIZE      0
-#define OUT_MD5       1
-#define OUT_BUFFER    2
-#define OUT_CURSOR    3
-#define OUT_SENDING   4
-
-#define SIZE_WIDTH    4
-#define MD5_WIDTH    32
 
 protected void open();
 void open_callback(int *data, int size);

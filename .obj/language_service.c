@@ -6,7 +6,7 @@
  */
 
 // ([ str language_id :  map language_definition ])
-mapping languages;
+private mapping languages;
 
 public mapping get_language(string language_id);
 

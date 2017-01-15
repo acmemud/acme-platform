@@ -5,13 +5,15 @@
  * @alias EnglishLib
  */
 
+protected string objective(object what);
+
 /**
  * Return the objective pronoun for a given object.
  *
  * @param  what the object
  * @return      "he, "she", or "it", depending on gender
  */
-string objective(object what) {
+protected string objective(object what) {
   switch (what->query_gender()) {
     case "male": return "he";
     case "female": return "she";

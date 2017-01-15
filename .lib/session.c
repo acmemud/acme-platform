@@ -25,6 +25,9 @@ struct SessionInfo {
   struct ConnectedSessionInfo *connections;
 };
 
+protected int is_active(string session_id);
+protected int is_subsession(string session_id, string subsession_id);
+
 /**
  * Test whether a session is "active", e.g. the session state is "running" or
  * "suspended".
@@ -32,7 +35,7 @@ struct SessionInfo {
  * @param  session_id    the session being queried
  * @return 1 if the session is active, otherwise 0
  */
-int is_active(string session_id) {
+protected int is_active(string session_id) {
   return member(([ SESSION_STATE_RUNNING, SESSION_STATE_SUSPENDED ]), 
                 SessionTracker->query_state(session_id)); 
 }
@@ -44,7 +47,7 @@ int is_active(string session_id) {
  * @param  subsession_id the potential subsession
  * @return 1 if second arg is a subsession of the first, otherwise 0
  */
-int is_subsession(string session_id, string subsession_id) {
+protected int is_subsession(string session_id, string subsession_id) {
   mapping subsessions = SessionTracker->get_subsessions(session_id);
   if (subsessions) {
     return member(subsessions, subsession_id);

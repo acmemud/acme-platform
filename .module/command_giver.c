@@ -4,66 +4,45 @@
  * @author devo@eotl
  * @alias CommandGiverMixin
  */
-
 #include <sys/functionlist.h>
 #include <capability.h>
 #include <command_giver.h>
 #include <command.h>
 
-inherit ObjectLib;
-inherit FileLib;
-inherit ArrayLib;
-inherit CommandSpecLib;
+private inherit ObjectLib;
+private inherit FileLib;
+private inherit ArrayLib;
+private inherit CommandSpecLib;
 
 private mapping CAPABILITIES_VAR = ([ CAP_COMMAND_GIVER ]);
 private string CMD_IMPORTS_VAR = 
   PlatformBinDir "/command_giver/command_giver.cmds";
 
-default private variables;
+private nosave mixed *commands;
 
-nosave mixed *commands;
-
-default public functions;
-
-protected void setup();
-int check_command_access(object cmd_ob, int read);
+public void setup();
+int is_command_giver();
 mixed *load_cmd_imports();
-int do_command(string arg);
-int run_script(string script_file);
-object load_controller(string controller);
+public int do_command(string arg);
+public int run_script(string script_file);
+protected object load_controller(string controller);
 
 /**
  * Setup the CommandGiverMixin.
  */
-protected void setup() {
+public void setup() {
   object logger = LoggerFactory->get_logger(THISO);
   commands = load_cmd_imports();
   //logger->info("commands: %O\n", commands);
 }
 
 /**
- * Test whether a given command object should be allowed this command giver's
- * read/write access.
- *
- * @param  cmd_ob the command object being executed
- * @param  read   non-zero if only read access is being granted
- * @return        non-zero if access should be granted
+ * Return true to indicate this object is a command giver.
+ * 
+ * @return 1 to indicate object is a command giver
  */
-int check_command_access(object cmd_ob, int read) {
-  int config = GRANT_ACCESS_UNFORCED;
-  if (THISP != THISO) {
-    return 0;
-  }
-  switch (config) {
-    case GRANT_ACCESS_ALL:
-      return 1;
-    case GRANT_ACCESS_UNFORCED:
-      return (THISP == THISI);
-    case GRANT_ACCESS_NONE:
-    default:
-      return 0;
-  }
-  return 0;
+int is_command_giver() {
+  return 1;
 }
 
 /**
@@ -97,7 +76,7 @@ mixed *load_cmd_imports() {
  * @return     the result of the command execution; 1 for success, 0 for
  *             failure.
  */
-int do_command(string arg) {
+public int do_command(string arg) {
   mapping fragments = ([ ]); // len to fragment 
   mapping matched = ([ ]);  // verb to arg
   int arglen = strlen(arg);
@@ -179,7 +158,7 @@ int do_command(string arg) {
  * @param  script_file   the script file
  * @return 1 for success, 0 for failure
  */
-int run_script(string script_file) {
+public int run_script(string script_file) {
   string script = read_file(script_file);
   if (!script) {
     return 0;
@@ -197,7 +176,7 @@ int run_script(string script_file) {
  * @param  controller    the path to the controller
  * @return the loaded controller object
  */
-object load_controller(string controller) {
+protected object load_controller(string controller) {
   object result;
   object logger = LoggerFactory->get_logger(THISO);
   string err = catch(result = load_object(controller); publish);
@@ -207,13 +186,3 @@ object load_controller(string controller) {
   return result;
 }
 
-
-/*
-mixed modify_command(string cmd) {
-  // TODO add support for default exit verb setting
-  if (ENV(THISO) && ENV(THISO)->query_exit(cmd)) {
-    return "walk " + cmd;
-  }
-  return 0;
-}
-*/

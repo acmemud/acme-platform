@@ -6,7 +6,16 @@
  */
 #include <string.h>
 
-inherit ArrayLib;
+private inherit ArrayLib;
+
+protected varargs int find_nonws(string str, int start);
+protected int is_escaped(string str, int index);
+protected varargs int search_str_unescaped(string str, int el, int pos, 
+                                           int step);
+protected varargs int match_quote(string str, int start, string quote_chars);
+protected string unescape(string str);
+protected varargs string unquote(string str, string quote_chars);
+protected string crop_string(string str, int length);
 
 /**
  * Find the first non-space character in a string.
@@ -18,7 +27,7 @@ inherit ArrayLib;
  * @return       the index of the first non-space character, or strlen(str)
  *               if the string only contains spaces
  */
-varargs int find_nonws(string str, int start) {
+protected varargs int find_nonws(string str, int start) {
   for (int size = strlen(str);
        (start < size) && (str[start] == ' ');
        start++);
@@ -32,7 +41,7 @@ varargs int find_nonws(string str, int start) {
  * @param  index the index of the character to test
  * @return       true if str[index] is escaped
  */
-int is_escaped(string str, int index) {
+protected int is_escaped(string str, int index) {
   // It's complicated because backslashes can be escaped too.
   int last_non_bs = anti_searcha(str, '\\', index-1, -1);
   return (index - last_non_bs + 1) % 2;
@@ -48,7 +57,8 @@ int is_escaped(string str, int index) {
  * @return      the index of the first unescaped character, or -1 if
  *              character was not found
  */
-varargs int search_str_unescaped(string str, int el, int pos, int step) {
+protected varargs int search_str_unescaped(string str, int el, int pos, 
+                                           int step) {
   step ||= 1;
 
   for (int size = strlen(str); (pos < size) && (pos >= 0); pos += step) {
@@ -70,7 +80,7 @@ varargs int search_str_unescaped(string str, int el, int pos, int step) {
  *                     character sequence, or the index of the last character
  *                     of the first word
  */
-varargs int match_quote(string str, int start, string quote_chars) {
+protected varargs int match_quote(string str, int start, string quote_chars) {
   int end;
 
   if (member(quote_chars || QUOTE_CHARS, str[start]) != -1)
@@ -90,7 +100,7 @@ varargs int match_quote(string str, int start, string quote_chars) {
  * @param  str the string to unescape
  * @return     the unescaped string
  */
-string unescape(string str) {
+protected string unescape(string str) {
   string copy = "";
 
   for (int len = strlen(str), int i = 0, int next = 0;
@@ -115,7 +125,7 @@ string unescape(string str) {
  *                     defaults to "\"'"
  * @return             the unquoted string
  */
-varargs string unquote(string str, string quote_chars) {
+protected varargs string unquote(string str, string quote_chars) {
   int len = strlen(str);
 
   // no room for quotes
@@ -141,7 +151,7 @@ varargs string unquote(string str, string quote_chars) {
  * @return        the original string, or a truncated string with trailng
  *                elipsis
  */
-string crop_string(string str, int length) {
+protected string crop_string(string str, int length) {
   if (strlen(str) > length) {
     return str[0..(length - 4)] + ELIPSIS;
   }

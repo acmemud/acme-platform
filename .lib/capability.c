@@ -5,6 +5,8 @@
  * @alias CapabilityLib
  */
 
+protected int is_capable(object ob, string cap);
+
 /**
  * Test if an object has a specified capability.
  *
@@ -12,7 +14,7 @@
  * @param  cap the capability in question
  * @return     1 if the object has the specified capability, otherwise 0
  */
-int is_capable(object ob, string cap) {
+protected int is_capable(object ob, string cap) {
   mapping caps = query_capabilities(ob);
   return (member(caps, cap));
 }

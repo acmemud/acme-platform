@@ -11,8 +11,24 @@
 // ([ pattern : time; result ])
 private nosave mapping pattern_cache = ([ ]);
 
-private string *expand_files(string *path, string *dirs);
+protected int file_exists(string filename);
+protected int is_directory(string filename);
+protected string basename(string filename);
+protected string dirname(string filename);
+protected string munge_filename(string filename);
+protected varargs string expand_path(string pattern, mixed rel);
+protected varargs mixed *expand_pattern(string pattern, object rel);
+private mixed *expand_files(string *path, mixed *dirs);
 private mixed *collate_files(string dir, string pattern);
+protected int is_loadable(string file);
+protected int is_special_dir(string path);
+private int _traverse(closure callback, mixed *info, string root, 
+                      mixed *args);
+protected int traverse_tree(string root, closure callback, 
+                            varargs mixed *args);
+protected int copy_tree(string src, string dest);
+protected mixed read_value(string file);
+protected int write_value(string file, mixed value);
 
 /**
  * Test whether a file exists.
@@ -20,7 +36,7 @@ private mixed *collate_files(string dir, string pattern);
  * @param  filename the filename to test
  * @return          1 if the file exists, otherwise 0
  */
-int file_exists(string filename) {
+protected int file_exists(string filename) {
   return file_size(filename) != -1;
 }
 
@@ -30,7 +46,7 @@ int file_exists(string filename) {
  * @param  filename the path to test
  * @return          1 if the path is a directory, otherwise 0
  */
-int is_directory(string filename) {
+protected int is_directory(string filename) {
   return file_size(filename) == FSIZE_DIR;
 }
 
@@ -40,7 +56,7 @@ int is_directory(string filename) {
  * @param  filename the path to check
  * @return          the base filename of the path
  */
-string basename(string filename) {
+protected string basename(string filename) {
   return explode(filename, "/")[<1];
 }
 
@@ -50,7 +66,7 @@ string basename(string filename) {
  * @param  filename the path of the file to check
  * @return          the name of the containing directory
  */
-string dirname(string filename) {
+protected string dirname(string filename) {
   if (!stringp(filename) || !strlen(filename)) {
     return 0;
   }
@@ -67,7 +83,7 @@ string dirname(string filename) {
  * @param  filename the file (or dir) name to munge
  * @return          the munged name
  */
-string munge_filename(string filename) {
+protected string munge_filename(string filename) {
   int *result = allocate(strlen(filename));
   int slash = 0;  
   int pos = 0;
@@ -97,7 +113,7 @@ string munge_filename(string filename) {
  *                 resolved
  * @return         the absolute path
  */
-varargs string expand_path(string pattern, mixed rel) {
+protected varargs string expand_path(string pattern, mixed rel) {
   string cwd;
   if (stringp(rel)) {
     cwd = dirname(rel);
@@ -176,7 +192,7 @@ varargs string expand_path(string pattern, mixed rel) {
  *                 resolved
  * @return         a list of all matching files (constrained by valid_read)
  */
-varargs mixed *expand_pattern(string pattern, object rel) {
+protected varargs mixed *expand_pattern(string pattern, object rel) {
   pattern = expand_path(pattern, rel);
   if (pattern[<1] == '/') {
     pattern += "*";
@@ -292,7 +308,7 @@ private mixed *collate_files(string dir, string pattern) {
  * @param  file the filename
  * @return      1 if file can be loaded, otherwise 0
  */
-int is_loadable(string file) {
+protected int is_loadable(string file) {
   return (file[<2..<1] == ".c");
 }
 
@@ -302,7 +318,7 @@ int is_loadable(string file) {
  * @param  path          a file path
  * @return 1 if path is a special directory
  */
-int is_special_dir(string path) {
+protected int is_special_dir(string path) {
   int len = strlen(path);
   if (!len) {
     return 0;
@@ -331,7 +347,8 @@ int is_special_dir(string path) {
  * @param  args          extra args to pass to the callback
  * @return the number of files processed
  */
-private int _traverse(closure callback, mixed *info, string root, mixed *args) {
+private int _traverse(closure callback, mixed *info, string root, 
+                      mixed *args) {
   int result = 0;
   if (apply(callback, info[0], info[0][strlen(root)..], info[1], info[2], 
             info[3], info[4], args)) {
@@ -356,7 +373,8 @@ private int _traverse(closure callback, mixed *info, string root, mixed *args) {
  * @param  args          extra args to pass to the callback
  * @return the number of files and directories processed
  */
-int traverse_tree(string root, closure callback, varargs mixed *args) {
+protected int traverse_tree(string root, closure callback, 
+                            varargs mixed *args) {
   root = munge_filename(root);
   mixed *info;
   if (root[<1] == '/') {
@@ -382,7 +400,7 @@ int traverse_tree(string root, closure callback, varargs mixed *args) {
  * @param  dest          the destination path
  * @return the number of files and directories copied
  */
-int copy_tree(string src, string dest) {
+protected int copy_tree(string src, string dest) {
   closure copy_file = (: 
     object logger = LoggerFactory->get_logger(THISO);
     string file = $1;
@@ -421,7 +439,7 @@ int copy_tree(string src, string dest) {
  * @param  file          the .val file
  * @return the restored value
  */
-mixed read_value(string file) {
+protected mixed read_value(string file) {
   string data = read_file(file);
   if (!data) {
     return 0;
@@ -436,6 +454,6 @@ mixed read_value(string file) {
  * @param  value         the value to save
  * @return 1 for success, 0 for failure
  */
-int write_value(string file, mixed value) {
+protected int write_value(string file, mixed value) {
   return write_file(file, save_value(value));
 }

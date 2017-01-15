@@ -4,6 +4,7 @@
  * @author devo@eotl
  * @alias AccessLib
  */
+#include <access.h>
 
 /**
  * For objects loaded from a specified path, get the uid the object should be 
@@ -12,9 +13,7 @@
  * @param  objectname    the path of the object being created
  * @return the uid at create time
  */
-#include <access.h>
-
-string get_create_uid(string objectname) {
+protected string get_create_uid(string objectname) {
   if (objectp(DomainTracker)) {
     return DomainTracker->query_domain_id(objectname);
   } else {
@@ -29,7 +28,7 @@ string get_create_uid(string objectname) {
  * @param  ob            the target object
  * @return the user of the object
  */
-string get_user(object ob) {
+protected string get_user(object ob) {
   string euid = geteuid(ob);
   string result;
   int pos = member(euid, '@');

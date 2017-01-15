@@ -10,21 +10,29 @@
 // TODO aliases
 // TODO subs
 
-inherit FileLib;
-
-default private variables;
+private inherit FileLib;
 
 private mapping CAPABILITIES_VAR = ([ CAP_SHELL ]);
 private string CMD_IMPORTS_VAR = PlatformBinDir "/shell/shell.cmds";
 
-string cwd, homedir, *dirstack, context;
+private string cwd, homedir, *dirstack, context;
 
-default private functions;
+public void setup();
+string query_cwd();
+int set_cwd(string dir);
+string *query_dirs();
+void push_dir(string dir);
+string pop_dir();
+void clear_dirs();
+string query_homedir();
+int set_homedir(string dir);
+string query_context();
+int set_context(string c);
 
 /**
  * Setup the ShellMixin.
  */
-protected void setup() {
+public void setup() {
   dirstack = ({ });
   context = "";
 }
@@ -34,7 +42,7 @@ protected void setup() {
  *
  * @return the player's current working directory
  */
-public string query_cwd() {
+string query_cwd() {
   return cwd;
 }
 
@@ -44,7 +52,7 @@ public string query_cwd() {
  * @param  dir the directory to set
  * @return     0 for failure, 1 for success
  */
-public int set_cwd(string dir) {
+int set_cwd(string dir) {
   // TODO add security
   if (!is_directory(dir)) {
     return 0;
@@ -59,7 +67,7 @@ public int set_cwd(string dir) {
  *
  * @return the directory stack
  */
-public string *query_dirs() {
+string *query_dirs() {
   return dirstack;
 }
 
@@ -68,7 +76,7 @@ public string *query_dirs() {
  *
  * @param dir the directory to add
  */
-public void push_dir(string dir) {
+void push_dir(string dir) {
   dirstack = ({ dir }) + dirstack;
   return;
 }
@@ -78,7 +86,7 @@ public void push_dir(string dir) {
  *
  * @return the most recently pushed directory
  */
-public string pop_dir() {
+string pop_dir() {
   if (!sizeof(dirstack)) {
     return 0;
   }
@@ -90,7 +98,7 @@ public string pop_dir() {
 /*
   Clear the directory stack.
  */
-public void clear_dirs() {
+void clear_dirs() {
   dirstack = ({ });
   return;
 }
@@ -100,7 +108,7 @@ public void clear_dirs() {
  *
  * @return the player's home directory.
  */
-public string query_homedir() {
+string query_homedir() {
   return homedir;
 }
 
@@ -108,9 +116,9 @@ public string query_homedir() {
  * Set the home directory for this player.
  *
  * @param  dir the directory to set
- * @return     0 for failure, 1 for success
+- * @return     0 for failure, 1 for success
  */
-public int set_homedir(string dir) {
+int set_homedir(string dir) {
   // TODO add security
   if (!is_directory(dir)) {
     return 0;
@@ -124,7 +132,7 @@ public int set_homedir(string dir) {
  *
  * @return the current context
  */
-public string query_context() {
+string query_context() {
   return context;
 }
 
@@ -133,11 +141,20 @@ public string query_context() {
  * @param  c context to set
  * @return   1 for success, 0 for failure
  */
-public int set_context(string c) {
+int set_context(string c) {
   LoggerFactory->get_logger(THISO)->trace("set_context(%O)", c);
   if (!stringp(c)) {
     return 0;
   }
   context = c;
+  return 1;
+}
+
+/**
+ * Return true to indicate this object has a shell.
+ * 
+ * @return 1
+ */
+int has_shell() {
   return 1;
 }

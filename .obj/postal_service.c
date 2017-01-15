@@ -9,10 +9,13 @@
 #include <message.h>
 #include <capability.h>
 
-inherit MessageLib;
-inherit CapabilityLib;
+private inherit MessageLib;
+private inherit CapabilityLib;
 
-object logger = LoggerFactory->get_logger(THISO);
+public varargs struct Message send_message(object target, string topic, 
+                                           string message, mapping context, 
+                                           object sender);
+public varargs string prompt_message(object target, object sender);
 
 /**
  * Send a message to a sensor object. Target must be a sensor.
@@ -28,9 +31,11 @@ object logger = LoggerFactory->get_logger(THISO);
  * @return a Message struct representing the sent message, or 0 if message
  *         could not be sent
  */
-varargs struct Message send_message(object target, string topic, 
-                                    string message, mapping context, 
-                                    object sender) {
+public varargs struct Message send_message(object target, string topic, 
+                                           string message, mapping context, 
+                                           object sender) {
+  object logger = LoggerFactory->get_logger(THISO);
+
   if (!mappingp(context)) {
     context = ([ ]);
   }
@@ -65,7 +70,7 @@ varargs struct Message send_message(object target, string topic,
  *                       messages
  * @return the prompt that was sent, or 0 unsent
  */
-varargs string prompt_message(object target, object sender) {
+public varargs string prompt_message(object target, object sender) {
   if (!interactive(target)) {
     // TODO review this, maybe do target->is_interactive() instead
     return 0;
@@ -90,4 +95,3 @@ varargs string prompt_message(object target, object sender) {
   efun::tell_object(target, prompt);
   return prompt;
 }
-

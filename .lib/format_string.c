@@ -4,23 +4,17 @@
  * @author devo
  * @alias FormatStringLib
  */
-
 #include <sys/debug_info.h>
+#include <format_string.h>
 
-#define DEFAULT_ARG  0
-#define SPRINTF_FMT  1
-#define FMT_LAMBDA   2
+private inherit ArgumentLib;
+private inherit ArrayLib;
+private inherit StringLib;
+private inherit ClosureLib;
 
-#define ARG_OPEN     "{["
-#define ARG_CLOSE    "}]"
-
-inherit ArgumentLib;
-inherit ArrayLib;
-inherit StringLib;
-inherit ClosureLib;
-
-varargs string *explode_format(string str, string delim,
-                               string open, string close);
+protected closure parse_format(string format, mapping infomap, symbol *args);
+protected varargs string *explode_format(string str, string delim,
+                                         string open, string close);
 /**
  * Compile a format string into a formatter closure with the given format
  * specifiers and args. Format strings may contain tokens of the format "%c"
@@ -63,7 +57,7 @@ varargs string *explode_format(string str, string delim,
  * @return         a formatter closure that takes specified args and will
  *                 produce formatted strings according to infomap
  */
-closure parse_format(string format, mapping infomap, symbol *args) {
+protected closure parse_format(string format, mapping infomap, symbol *args) {
   object logger = LoggerFactory->get_logger(THISO);
   string output_fmt = "";
   mixed *output_args = ({ });
@@ -116,8 +110,8 @@ closure parse_format(string format, mapping infomap, symbol *args) {
  * @param  close  a string of CLOSE characters; defaults to "\")]}"
  * @return        an array of strings separated by the delimiter
  */
-varargs string *explode_format(string str, string delim,
-                               string open, string close) {
+protected varargs string *explode_format(string str, string delim,
+                                         string open, string close) {
   int delim_len = strlen(delim);
   if (delim_len == 0) {
     return explode(str, delim);

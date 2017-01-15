@@ -7,34 +7,34 @@
 #include <capability.h>
 #include <command_giver.h>
 
-inherit CommandGiverMixin;
-inherit SensorMixin;
-inherit ShellMixin;
+virtual inherit CommandGiverMixin;
+virtual inherit SensorMixin;
+virtual inherit ShellMixin;
 
-inherit ArrayLib;
-inherit ExceptionLib;
+private inherit ArrayLib;
+private inherit ExceptionLib;
 
 private mapping CAPABILITIES_VAR = ([ CAP_AVATAR ]);
 private string CMD_IMPORTS_VAR = PlatformBinDir "/avatar/avatar.cmds";
 
-string master_session;
-mapping slave_sessions;
+private string master_session;
+private mapping slave_sessions;
 
-protected void setup();
+public void setup();
 public mixed *try_descend(string session_id);
 public void on_descend(string session_id);
-protected int set_master_session(string session_id);
-public string query_master_session();
-protected int add_slave_session(string session_id);
-protected int remove_slave_session(string session_id);
-public mapping query_slave_sessions();
-public string query_username();
-public nomask int is_avatar();
+int set_master_session(string session_id);
+string query_master_session();
+int add_slave_session(string session_id);
+int remove_slave_session(string session_id);
+mapping query_slave_sessions();
+string query_username();
+int is_avatar();
 
 /**
  * Setup the AvatarMixin.
  */
-protected void setup() {
+public void setup() {
   CommandGiverMixin::setup();
   SensorMixin::setup();
   ShellMixin::setup();
@@ -96,7 +96,7 @@ public void on_descend(string session_id) {
  * @param session_id the new master session id
  * @return 1 for success, 0 for failure
  */
-protected int set_master_session(string session_id) {
+int set_master_session(string session_id) {
   master_session = session_id;
   remove_slave_session(session_id);
   return 1;
@@ -107,7 +107,7 @@ protected int set_master_session(string session_id) {
  * 
  * @return the master session id
  */
-public string query_master_session() {
+string query_master_session() {
   return master_session;
 }
 
@@ -117,7 +117,7 @@ public string query_master_session() {
  * @param session_id the slave session id to add
  * @return 1 for success, 0 for failure
  */
-protected int add_slave_session(string session_id) {
+int add_slave_session(string session_id) {
   slave_sessions += ([ session_id ]); 
   return 1;
 }
@@ -128,7 +128,7 @@ protected int add_slave_session(string session_id) {
  * @param  `session_id    the slave session id to remove
  * @return `[description]
  */
-protected int remove_slave_session(string session_id) {
+int remove_slave_session(string session_id) {
   slave_sessions -= ([ session_id ]);
   return 1;
 }
@@ -138,7 +138,7 @@ protected int remove_slave_session(string session_id) {
  * 
  * @return a zero-width mapping of slave session ids
  */
-public mapping query_slave_sessions() {
+mapping query_slave_sessions() {
   return slave_sessions;
 }
 
@@ -148,7 +148,7 @@ public mapping query_slave_sessions() {
  *
  * @return the username
  */
-public string query_username() {
+string query_username() {
   if (!master_session) {
     return 0;
   }
@@ -171,6 +171,6 @@ string query_terminal_type() {
  *
  * @return 1
  */
-public nomask int is_avatar() {
+int is_avatar() {
   return 1;
 }

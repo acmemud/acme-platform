@@ -9,9 +9,21 @@
 private mapping CAPABILITIES_VAR = ([ CAP_SOUL ]);
 //private string CMD_IMPORTS_VAR = PlatformBinDir "/soul.cmds";
 
+public void setup();
+int has_soul();
+
 /**
  * Setup the SoulMixin.
  */
-void setup() {
+public void setup() {
 
+}
+
+/**
+ * Return true to indicate this object has a soul.
+ * 
+ * @return 1
+ */
+int has_soul() {
+  return 1;
 }

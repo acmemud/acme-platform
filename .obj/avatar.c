@@ -5,29 +5,30 @@
  * @author devo@eotl
  * @alias PlatformAvatar
  */
-inherit AvatarMixin;
-inherit SoulMixin;
+virtual inherit AvatarMixin;
+virtual inherit SoulMixin;
 
-inherit ExceptionLib;
-inherit SessionLib;
-inherit ZoneLib;
+private inherit ExceptionLib;
+private inherit SessionLib;
+private inherit ZoneLib;
 
+// XXX get rid of this define, use ZoneTracker->get_start_room(HomeZone)
 #define WORKROOM   "workroom"
 
-void setup();
-mixed *try_descend(string session_id);
-void on_descend(string session_id, string subsession_id, string player_id, 
-                object room, varargs mixed *args);
-string get_player(string user_id);
-string get_start_room(string player_id);
-object load_start_room(string room, string player_id);
-string get_avatar_path(object room, string player_id);
-string get_default_start_room(string username);
+public void setup();
+public mixed *try_descend(string session_id);
+public void on_descend(string session_id, string subsession_id, 
+                       string player_id, object room, varargs mixed *args);
+protected string get_player(string user_id);
+protected string get_start_room(string player_id);
+protected object load_start_room(string room, string player_id);
+protected string get_avatar_path(object room, string player_id);
+protected string get_default_start_room(string username);
 
 /**
  * Setup platform avatar.
  */
-void setup() {
+public void setup() {
   AvatarMixin::setup();
   SoulMixin::setup();
   return;
@@ -50,7 +51,7 @@ void setup() {
  *         room            the player's start room
  * @throws Exception       if something goes wrong to prevent descension
  */
-mixed *try_descend(string session_id) {
+public mixed *try_descend(string session_id) {
   object logger = LoggerFactory->get_logger(THISO);
   mixed *result = AvatarMixin::try_descend(session_id);
   string user_id = SessionTracker->query_user(session_id);
@@ -135,8 +136,8 @@ mixed *try_descend(string session_id) {
  * @param  room          the start room of the player avatar
  * @param  args          extra args to pass onto the player's on_descend()
  */
-void on_descend(string session_id, string subsession_id, string player_id, 
-                object room, varargs mixed *args) {
+public void on_descend(string session_id, string subsession_id, 
+                       string player_id, object room, varargs mixed *args) {
   object logger = LoggerFactory->get_logger(THISO);
   AvatarMixin::on_descend(session_id);
 
@@ -162,7 +163,7 @@ void on_descend(string session_id, string subsession_id, string player_id,
  * @param  user_id       the user id for whom to get a player
  * @return the player id of the user's player
  */
-string get_player(string user_id) {
+protected string get_player(string user_id) {
   mapping player_ids = PlayerTracker->query_players(user_id);
   if (!player_ids || !sizeof(player_ids)) {
     return PlayerTracker->new_player(user_id);
@@ -178,7 +179,7 @@ string get_player(string user_id) {
  * @param  player_id     the player who needs a start room
  * @return the path of the player's start room
  */
-string get_start_room(string player_id) {
+protected string get_start_room(string player_id) {
   string result;
   string last_session = PlayerTracker->query_last_session(player_id);
   if (last_session) {
@@ -200,7 +201,7 @@ string get_start_room(string player_id) {
  * @param  player_id     a player to use for determining reasonable default
  * @return the loaded start room
  */
-object load_start_room(string room, string player_id) {
+protected object load_start_room(string room, string player_id) {
   object result = load_object(room);
   if (!result) {
     string username = UserTracker->query_username(
@@ -222,7 +223,7 @@ object load_start_room(string room, string player_id) {
  * @param  player_id     the player that needs an avatar
  * @return the path to a valid avatar program
  */
-string get_avatar_path(object room, string player_id) {
+protected string get_avatar_path(object room, string player_id) {
   string zone = get_zone(room);
   string flavor = ZoneTracker->query_flavor(zone);
   if (!flavor) {
@@ -247,13 +248,13 @@ string get_avatar_path(object room, string player_id) {
  * @param  username      the username for the start room path
  * @return the default start room path
  */
-string get_default_start_room(string username) {
+protected string get_default_start_room(string username) {
   return sprintf("%s/%s/%s.c", UserDir, username, WORKROOM);
 }
 
 /**
  * Constructor. Run setup().
  */
-void create() { 
+public void create() { 
   setup();
 }

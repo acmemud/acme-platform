@@ -7,7 +7,17 @@
 #include <sys/lpctypes.h>
 #include <sql.h>
 
-inherit JSONLib;
+private inherit JSONLib;
+
+protected string encode_value(mixed value);
+protected string get_insert_statement(string table, mapping data, 
+                                      mixed *params);
+protected string get_update_statement(string table, mixed id, mapping data, 
+                                      mixed *params);
+protected string get_select_statement(string table, mapping key, 
+                                      mixed *params);
+protected string get_create_table_statement(string table, mapping *cols);
+protected string get_table_info_statement(string table);
 
 /**
  * Encode an LPC value for insertion into a SQL statement. Complex data types
@@ -16,7 +26,7 @@ inherit JSONLib;
  * @param  value         the value to encode
  * @return the encoded string
  */
-string encode_value(mixed value) {
+protected string encode_value(mixed value) {
   switch (typeof(value)) {
     case T_NUMBER:
       return to_string(value);
@@ -48,7 +58,8 @@ string encode_value(mixed value) {
  * @param  params        a parameter array to populate, passed by reference
  * @return the insert statement for the provided data
  */
-string get_insert_statement(string table, mapping data, mixed *params) {
+protected string get_insert_statement(string table, mapping data, 
+                                      mixed *params) {
   string *columns = m_indices(data);
   params = m_values(data);
   string query;
@@ -79,8 +90,8 @@ string get_insert_statement(string table, mapping data, mixed *params) {
  * @param  params        a parameter array to populate, passed by reference
  * @return the update statement for the provided data
  */
-string get_update_statement(string table, mixed id, mapping data, 
-                            mixed *params) {
+protected string get_update_statement(string table, mixed id, mapping data, 
+                                      mixed *params) {
   string *columns = m_indices(data);
   params = m_values(data);
   string query;
@@ -123,7 +134,8 @@ string get_update_statement(string table, mixed id, mapping data,
  * @param  params        a parameter array to populate, passed by reference
  * @return the select statement for the provided key
  */
-string get_select_statement(string table, mapping key, mixed *params) {
+protected string get_select_statement(string table, mapping key, 
+                                      mixed *params) {
   string *columns = m_indices(key);
   params = m_values(key);
   string where = "";
@@ -151,7 +163,7 @@ string get_select_statement(string table, mapping key, mixed *params) {
  * @param  cols          the column list containing type, flags, and default
  * @return the create table statement for the provided columns
  */
-string get_create_table_statement(string table, mapping *cols) {
+protected string get_create_table_statement(string table, mapping *cols) {
   string columns = "";
   int first = 1;
   foreach (mapping col : cols) {
@@ -195,6 +207,6 @@ string get_create_table_statement(string table, mapping *cols) {
  * @param  table         the table name
  * @return the table info statement
  */
-string get_table_info_statement(string table) {
+protected string get_table_info_statement(string table) {
   return sprintf("pragma table_info(%s);", table);
 }

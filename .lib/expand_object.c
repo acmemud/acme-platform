@@ -6,11 +6,13 @@
  */
 #include <expand_object.h>
 
-inherit ArrayLib;
-inherit ArgumentLib;
-inherit FileLib;
-inherit StringLib;
+private inherit ArrayLib;
+private inherit ArgumentLib;
+private inherit FileLib;
+private inherit StringLib;
 
+protected varargs mixed *expand_objects(mixed ospecs, object who,
+                                        string root_context, int flags);
 private mixed *expand_group(string ospec, object who, string context,
                             string root_context, string *new_context,
                             int flags, mapping ancestors);
@@ -23,6 +25,9 @@ private string expand_single(string arg, object who, string context,
 private mixed *expand_term(string term, mixed *prev, object who,
                            string context, int flags);
 private mixed *expand_id(mixed *in, string id);
+protected varargs object expand_destination(string arg, object who,
+                                            string root_context, int flags,
+                                            string error);
 private string resolve_spec(string arg, string context);
 private string group_specs(string *ospecs);
 private string unnest(string ospec);
@@ -50,8 +55,8 @@ private object find_room(object arg);
  *                      detail id in ob which matched the ospec, or 0 if no
  *                      detail was specified
  */
-varargs mixed *expand_objects(mixed ospecs, object who,
-                              string root_context, int flags) {
+protected varargs mixed *expand_objects(mixed ospecs, object who,
+                                        string root_context, int flags) {
   object logger = LoggerFactory->get_logger(THISO);
   logger->trace("expand_objects(%O)", ospecs);
   string current_context = "";
@@ -92,28 +97,6 @@ varargs mixed *expand_objects(mixed ospecs, object who,
     return result[0..0];
   } else {
     return result;
-  }
-}
-
-/**
- * Singular version of expand_objects(). Will return either a single object or
- * 0 if no matching object was found.
-
- * @param  ospecs       an array of ospecs to expand
- * @param  who          the context in which to perform the expansion
- * @param  root_context an optional object ospec which will be used if no
- *                      objects can be found for 'who'
- * @param  flags        control flags
- * @return              a single target object, see expand_objects(); or 0
- *                      if no matching object was found
- */
-varargs mixed *expand_object(mixed ospecs, object who,
-                             string root_context, int flags) {
-  mixed *result = expand_objects(ospecs, who, root_context, flags | LIMIT_ONE);
-  if (sizeof(result)) {
-    return result[0];
-  } else {
-    return 0;
   }
 }
 
@@ -512,9 +495,9 @@ private mixed *expand_id(mixed *in, string id) {
  * @return              the destination object, or 0 if no destination was
  *                      found
  */
-varargs object expand_destination(string arg, object who,
-                                  string root_context, int flags,
-                                  string error) {
+protected varargs object expand_destination(string arg, object who,
+                                            string root_context, int flags,
+                                            string error) {
   object dest;
 
   mixed *targets = expand_objects(arg, who, root_context, flags);

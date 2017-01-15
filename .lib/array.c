@@ -5,6 +5,21 @@
  * @alias ArrayLib
  */
 
+protected varargs int searcha(mixed list, mixed el, int start, int step);
+protected varargs int anti_searcha(mixed list, mixed el, int start, int step);
+protected varargs int searcha_any(mixed list, mixed elements, int start, 
+                                  int step);
+protected varargs int anti_searcha_any(mixed list, mixed elements, int start,
+                                       int step);
+protected varargs mixed *unique_array(mixed *list, int keep_last);
+protected mixed flatten_array(mixed *list);
+protected mixed deep_flatten_array(mixed *list);
+protected mixed *m_value(mapping map, string k);
+protected varargs mixed reduce(mixed data, closure reducer, mixed initial, 
+                               varargs mixed *args);
+protected mapping *mapping_array(mixed *keys, mixed *data);
+protected mixed random_key(mapping map);
+
 /**
  * Return the index of the first element of an array or string which is a
  * specified value. Like member(), but provides the start/step capability.
@@ -15,7 +30,7 @@
  * @param  step  optional step
  * @return       the index of the first member of list which is el
  */
-varargs int searcha(mixed list, mixed el, int start, int step) {
+protected varargs int searcha(mixed list, mixed el, int start, int step) {
   int size = sizeof(list);
   step ||= 1;
 
@@ -38,7 +53,7 @@ varargs int searcha(mixed list, mixed el, int start, int step) {
  * @param  step  optional step
  * @return       the index of the first member of list which is not el
  */
-varargs int anti_searcha(mixed list, mixed el, int start, int step) {
+protected varargs int anti_searcha(mixed list, mixed el, int start, int step) {
   int size = sizeof(list);
   step ||= 1;
 
@@ -63,7 +78,8 @@ varargs int anti_searcha(mixed list, mixed el, int start, int step) {
  * @return          the index of the first member of list which matches one
  *                  of the specified elements
  */
-varargs int searcha_any(mixed list, mixed elements, int start, int step) {
+protected varargs int searcha_any(mixed list, mixed elements, int start, 
+                                  int step) {
   int size = sizeof(list);
   step ||= 1;
 
@@ -88,8 +104,8 @@ varargs int searcha_any(mixed list, mixed elements, int start, int step) {
  * @return          the index of the first member of list which is not one of
  *                  the specified elements
  */
-varargs int anti_searcha_any(mixed list, mixed elements, int start,
-                             int step) {
+protected varargs int anti_searcha_any(mixed list, mixed elements, int start,
+                                       int step) {
   int size = sizeof(list);
   step ||= 1;
 
@@ -116,7 +132,7 @@ varargs int anti_searcha_any(mixed list, mixed elements, int start,
  * @param  keep_last 0 to use first occurrence, otherwise use last
  * @return           a copy of the array with duplicates removed
  */
-varargs mixed *unique_array(mixed *list, int keep_last) {
+protected varargs mixed *unique_array(mixed *list, int keep_last) {
   mixed *out = ({ });
   mapping bag = ([ ]);
   if (keep_last) {
@@ -146,7 +162,7 @@ varargs mixed *unique_array(mixed *list, int keep_last) {
  * @param  list the array to flatten
  * @return      the flattened array
  */
-mixed flatten_array(mixed *list) {
+protected mixed flatten_array(mixed *list) {
   if (!pointerp(list)) {
     return ({ });
   }
@@ -171,7 +187,7 @@ mixed flatten_array(mixed *list) {
  * @param  list the array to flatten
  * @return      the flattened array
  */
-mixed deep_flatten_array(mixed *list) {
+protected mixed deep_flatten_array(mixed *list) {
   if (!pointerp(list)) {
     return ({ list });
   }
@@ -192,7 +208,7 @@ mixed deep_flatten_array(mixed *list) {
  * @param  key the mapping key
  * @return     an array of the mapping values for key, in order
  */
-mixed *m_value(mapping map, string k) {
+protected mixed *m_value(mapping map, string k) {
   if (!member(map, k)) {
     return 0;
   }
@@ -213,8 +229,8 @@ mixed *m_value(mapping map, string k) {
  * @param  args          extra args for the reducer
  * @return a value reduced on reducer->(current_value, element)
  */
-varargs mixed reduce(mixed data, closure reducer, mixed initial, 
-                     varargs mixed *args) {
+protected varargs mixed reduce(mixed data, closure reducer, mixed initial, 
+                               varargs mixed *args) {
   mixed result = initial;
   foreach (mixed el : data) {
     result = apply(reducer, result, el, args);
@@ -231,7 +247,7 @@ varargs mixed reduce(mixed data, closure reducer, mixed initial,
  * @param  data         an array of corresponding values
  * @return an array of mappings of keys to values
  */
-mapping *mapping_array(mixed *keys, mixed *data) {
+protected mapping *mapping_array(mixed *keys, mixed *data) {
   mapping *result = ({ });
   int size = sizeof(keys);
   foreach (mixed *values : data) {
@@ -254,7 +270,7 @@ mapping *mapping_array(mixed *keys, mixed *data) {
  * @param  map           the mapping
  * @return a random key, or 0 if the mapping is empty
  */
-mixed random_key(mapping map) {
+protected mixed random_key(mapping map) {
   if (!mappingp(map)) {
     return 0;
   }

@@ -8,9 +8,18 @@
 #include <object.h>
 #include <sql.h>
 
-inherit ObjectLib;
+private inherit ObjectLib;
 
-void track_object(object ob);
+public void telnet_neg_hook(int action, int option, int *opts);
+public string auto_include_hook(string base_file, string current_file, 
+public varargs mixed uids_hook(string objectname, object blueprint);
+public int command_hook(string command, object command_giver);
+public void move_object_hook(object item, object dest);  
+protected void track_object(object ob);
+public int create_hook(object ob);  
+public int reset_hook(object ob);
+public int clean_up_hook(int ref, object ob);
+private void register_hooks();
 
 /**
  * Telnet negotiation hook. Defer to ConnectionTracker for processing.
@@ -19,7 +28,7 @@ void track_object(object ob);
  * @param  option        negotation option
  * @param  opts          extra args to the negotation
  */
-void telnet_neg_hook(int action, int option, int *opts) {
+public void telnet_neg_hook(int action, int option, int *opts) {
   return ConnectionTracker->telnet_negotiation(THISP, action, option, opts);
 }
 
@@ -32,7 +41,8 @@ void telnet_neg_hook(int action, int option, int *opts) {
  * @param  sys           1 if sys include, otherwise 0
  * @return the auto include string
  */
-string auto_include_hook(string base_file, string current_file, int sys) {
+public string auto_include_hook(string base_file, string current_file, 
+                                int sys) {
   if (current_file && (current_file[<7..] == "/" AutoInclude)) {
     return "";
   } else {
@@ -47,7 +57,7 @@ string auto_include_hook(string base_file, string current_file, int sys) {
  * @param  blueprint     the program name of the blue print, if a clone
  * @return a string to use for both uid and euid
  */
-varargs mixed uids_hook(string objectname, object blueprint) {
+public varargs mixed uids_hook(string objectname, object blueprint) {
   // FUTURE implement uids
   return "root";
 }
@@ -60,7 +70,7 @@ varargs mixed uids_hook(string objectname, object blueprint) {
  * @param  command_giver the command giver
  * @return 1 if command was found and executed, otherwise 0
  */
-int command_hook(string command, object command_giver) {
+public int command_hook(string command, object command_giver) {
   return command_giver->do_command(command);
 }
 
@@ -72,7 +82,7 @@ int command_hook(string command, object command_giver) {
  * @param  item          the item being moved
  * @param  dest          the environment being moved into
  */
-void move_object_hook(object item, object dest) {  
+public void move_object_hook(object item, object dest) {  
   object origin = ENV(item);
   if (origin && origin->prevent_leave(item, dest)) { return; }
   if (!(item && dest)) { return; }
@@ -130,7 +140,7 @@ void move_object_hook(object item, object dest) {
  * 
  * @param  ob            the object being created
  */
-void track_object(object ob) {
+protected void track_object(object ob) {
   mixed path_info = get_path_info(ob);
   string zone_id = path_info[PATH_INFO_ZONE];
 
@@ -162,7 +172,7 @@ void track_object(object ob) {
  * @return 0, to indicate the object's current time to reset should be 
  *         preserved
  */
-int create_hook(object ob) {  
+public int create_hook(object ob) {  
   if (load_name(ob) == SQLiteClient) {
     call_out(#'track_object, 0, ob);
   } else {
@@ -179,7 +189,7 @@ int create_hook(object ob) {
  * @param  ob            the object being reset
  * @return time until next reset, in seconds
  */
-int reset_hook(object ob) {
+public int reset_hook(object ob) {
   return ob->reset();
 }
 
@@ -190,7 +200,7 @@ int reset_hook(object ob) {
  * @param  ob            the object being cleaned up
  * @return time until next clean up attempt, in seconds
  */
-int clean_up_hook(int ref, object ob) {
+public int clean_up_hook(int ref, object ob) {
   return ob->clean_up(ref);
 }
 
@@ -255,6 +265,6 @@ private void register_hooks() {
 /**
  * Constructor. Register hooks.
  */
-void create() {
+public void create() {
   register_hooks();
 }

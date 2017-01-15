@@ -4,14 +4,19 @@
  * @author devo@eotl
  * @alias ArgumentLib
  */
-
 #include <argument.h>
 
-inherit StringLib;
-inherit ArrayLib;
+private inherit StringLib;
+private inherit ArrayLib;
 
+protected varargs string *explode_args(string arg, int preserve_quotes);
 private int _find_close_char(string str, int start, string open,
                              string close, int len, int style, string both);
+protected varargs int find_close_char(string str, int start,
+                                      string open, string close);
+protected string *explode_unescaped(string str, string delim);
+protected varargs string *explode_nested(string str, string delim,
+                                         string open, string close);
 
 /**
  * Separate space-deliniated arguments, but keep quoted strings together.
@@ -22,7 +27,7 @@ private int _find_close_char(string str, int start, string open,
  * @return                 an array of space-deliniated arguments, with the
  *                         quoted strings returned as a single argument
  */
-varargs string *explode_args(string arg, int preserve_quotes) {
+protected varargs string *explode_args(string arg, int preserve_quotes) {
   string *args = ({ });
   if (!arg) { return args; }
 
@@ -109,8 +114,8 @@ private int _find_close_char(string str, int start, string open,
  *                ret ==0: error: str[start] was not an OPEN char
  *                ret < 0: error: failed to match open char at str[-ret - 1]
  */
-varargs int find_close_char(string str, int start,
-                            string open, string close) {
+protected varargs int find_close_char(string str, int start,
+                                      string open, string close) {
   // If you explicitly specify 0 for open, you will get errors.
   if (!stringp(close)) {
     open  = "\"([{";
@@ -141,7 +146,7 @@ varargs int find_close_char(string str, int start,
  * @param  delim the string delimiting the substrings
  * @return       an array of strings separated by the delimiter
  */
-string *explode_unescaped(string str, string delim) {
+protected string *explode_unescaped(string str, string delim) {
   int delim_len = strlen(delim);
   if (delim_len == 0) {
     return explode(str, delim);
@@ -182,8 +187,8 @@ string *explode_unescaped(string str, string delim) {
  * @param  close  a string of CLOSE characters; defaults to "\")]}"
  * @return        an array of strings separated by the delimiter
  */
-varargs string *explode_nested(string str, string delim,
-                               string open, string close) {
+protected varargs string *explode_nested(string str, string delim,
+                                         string open, string close) {
   int delim_len = strlen(delim);
   if (delim_len == 0) {
     return explode(str, delim);

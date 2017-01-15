@@ -11,15 +11,16 @@
 #include <sys/strings.h>
 #include <sys/input_to.h>
 #include <command.h>
+#include <command_controller.h>
 
-inherit CommandLib;
-inherit MessageLib;
-inherit ArgumentLib;
-inherit StringLib;
-inherit StructLib;
-inherit ObjectExpansionLib;
-inherit FileLib;
-inherit FormatStringLib;
+private inherit CommandLib;
+private inherit MessageLib;
+private inherit ArgumentLib;
+private inherit StringLib;
+private inherit StructLib;
+private inherit ObjectExpansionLib;
+private inherit FileLib;
+private inherit FormatStringLib;
 
 struct CommandState {
   string verb;
@@ -34,10 +35,9 @@ struct CommandState {
   int force_prompt;
 };
 
-#define DEFAULT_PROMPT "(%t) %m%d{ [%s]}: "
-#define DEFAULT_FAIL "%m\n"
+closure prompt_formatter, fail_formatter;
 
-mapping do_command(mixed *command, string verb, string arg);
+public mapping do_command(mixed *command, string verb, string arg);
 mapping process_command(struct CommandState state, closure callback);
 int process_args(struct CommandState state, closure callback);
 int process_opts(struct CommandState state, mapping opts, closure callback);
@@ -46,8 +46,8 @@ int process_field(struct CommandState state, mixed *field, string field_type,
                   mixed index, closure callback);
 void field_prompt(struct CommandState state, mixed *field, string field_type, 
                   mixed index, closure callback);
-void field_input(string arg, struct CommandState state, mixed *field, 
-                 string field_type, mixed index, closure callback);
+public void field_input(string arg, struct CommandState state, mixed *field, 
+                        string field_type, mixed index, closure callback);
 string parse_value(struct CommandState state, mixed *field, string field_type, 
                    mixed index, mixed val);
 string parse_boolean(string arg, mixed val);
@@ -63,9 +63,7 @@ varargs int do_validate(struct CommandState state, closure callback,
 int validate(mixed *validations, struct CommandState state, mixed val, 
              mixed *field, closure retry_test);
 mapping do_execute(mapping model, string verb);
-mapping execute(mapping model, string verb);
-
-closure prompt_formatter, fail_formatter;
+public mapping execute(mapping model, string verb);
 
 /**
  * Run a command. Takes a command definition loaded from a command spec file,
@@ -90,7 +88,7 @@ closure prompt_formatter, fail_formatter;
  * @return an "output" model mapping, or 0 if either the command failed or an
  *         interactive prompt was issued
  */
-mapping do_command(mixed *command, string verb, string arg) {
+public mapping do_command(mixed *command, string verb, string arg) {
   mapping opts, badopts;
   string *args;
   arg = trim(arg, TRIM_RIGHT, ' ');
@@ -413,8 +411,8 @@ void field_prompt(struct CommandState state, mixed *field, string field_type,
  *                       extra field ids
  * @param  callback      the callback to execute the validated command
  */
-void field_input(string arg, struct CommandState state, mixed *field, 
-                 string field_type, mixed index, closure callback) {
+public void field_input(string arg, struct CommandState state, mixed *field, 
+                        string field_type, mixed index, closure callback) {
   if (arg && strlen(arg)) {
     get_struct_member(state, field_type)[index] = arg;
   }
@@ -753,14 +751,14 @@ mapping do_execute(mapping model, string verb) {
  * @return a mapping that will be used for the model of the next command in 
  *         the pipeline
  */
-mapping execute(mapping model, string verb) {
+public mapping execute(mapping model, string verb) {
   return 0;
 }
 
 /**
  * Constructor.
  */
-void create() {
+public void create() {
   prompt_formatter = parse_format(DEFAULT_PROMPT, ([
       'm' : ({ 0, "%s", ({ ''message }) }),
       't' : ({ 0, "%s", ({ ''type }) }),

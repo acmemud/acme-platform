@@ -28,29 +28,20 @@
  *
  * @alias PropertyMixin
  */
-
 #include <property.h>
 #include <capability.h>
 
-inherit FileLib;
-
-default private variables;
+private inherit FileLib;
 
 private mapping CAPABILITIES_VAR = ([ CAP_PROPERTY ]);
 
-nosave mapping props;
+private nosave mapping props;
+private nosave mapping prop_values;
+private mapping saved_props;
+private mapping saved_prop_values;
+private nosave mapping masks;
 
-nosave mapping prop_values;
-
-mapping saved_props;
-
-mapping saved_prop_values;
-
-nosave mapping masks;
-
-default public functions;
-
-protected void setup();
+public void setup();
 varargs int init_prop(string prop, int flags, mixed method);
 varargs int configure_prop(string prop, int flags, mixed method);
 mixed query_prop(string prop);
@@ -65,7 +56,7 @@ varargs string generate_unique_prop_name(string seed);
 varargs int default_prop_access(string prop, int op, object source, 
                                 mixed special);
 private int check_vars();
-varargs private int check_access(string prop, int op, object source, 
+private varargs int check_access(string prop, int op, object source, 
                                  mixed special);
 private varargs mixed munge_method(mixed method, int extern, int mask);
 private int run_mask(mixed mask, string prop, mixed value);
@@ -73,7 +64,7 @@ private int run_mask(mixed mask, string prop, mixed value);
 /**
  * Initialize PropertyMixin.
  */
-protected void setup() {
+public void setup() {
   check_vars();
 }
 
@@ -518,7 +509,7 @@ private int check_vars() {
  * @param  special extra information, depending on the operation
  * @return         1 if access should be denied, or 0 to allow the operation
  */
-varargs private int check_access(string prop, int op, object source, 
+private varargs int check_access(string prop, int op, object source, 
                                  mixed special) {
 
   // make sure prop exists

@@ -6,10 +6,10 @@
  */
 #include <user.h>
 
-inherit FileLib;
-inherit ConnectionLib;
-inherit SessionLib;
-inherit FormatStringLib;
+private inherit FileLib;
+private inherit ConnectionLib;
+private inherit SessionLib;
+private inherit FormatStringLib;
 
 struct UserInfo {
   string id;
@@ -17,15 +17,15 @@ struct UserInfo {
   string last_session;
 };
 
-string user_dir(string username);
-int user_exists(string username);
-string passwd_file(string username);
-string hash_passwd(string password);
-string create_user(string username, string password);
-int install_skeleton(string user_dir, string username);
-int apply_template(string template, string username);
-int save_password(string user_id, string password);
-string attach_session(object login, string user_id);
+protected string user_dir(string username);
+protected int user_exists(string username);
+protected string passwd_file(string username);
+protected string hash_passwd(string password);
+protected string create_user(string username, string password);
+protected int install_skeleton(string user_dir, string username);
+protected int apply_template(string template_path, string username);
+protected int save_password(string user_id, string password);
+protected string attach_session(object interactive, string user_id);
 
 /**
  * Get the user directory for a given username.
@@ -33,7 +33,7 @@ string attach_session(object login, string user_id);
  * @param  username the username of directory owner
  * @return          the user dir
  */
-string user_dir(string username) {
+protected string user_dir(string username) {
   return UserDir "/" + username;
 }
 
@@ -43,7 +43,7 @@ string user_dir(string username) {
  * @param  username the username to test
  * @return          1 if the user exists, otherwise 0
  */
-int user_exists(string username) {
+protected int user_exists(string username) {
   return file_exists(user_dir(username));
 }
 
@@ -53,7 +53,7 @@ int user_exists(string username) {
  * @param  username      the username
  * @return the user's password file
  */
-string passwd_file(string username) {
+protected string passwd_file(string username) {
   return user_dir(username) + PASSWD_FILE;
 }
 
@@ -63,7 +63,7 @@ string passwd_file(string username) {
  * @param  password      the plain text password
  * @return the hashed password
  */
-string hash_passwd(string password) {
+protected string hash_passwd(string password) {
   return hash(PASSWD_HASH_METHOD, password, PASSWD_HASH_ITERATIONS);
 }
 
@@ -76,7 +76,7 @@ string hash_passwd(string password) {
  * @param  password      the plain-text password
  * @return the new user id
  */
-string create_user(string username, string password) {
+protected string create_user(string username, string password) {
   object logger = LoggerFactory->get_logger(THISO);
 
   string user_dir = user_dir(username);
@@ -101,7 +101,7 @@ string create_user(string username, string password) {
  * @param  username      the username of the dir's owner
  * @return 1 for success, 0 for failure
  */
-int install_skeleton(string user_dir, string username) {
+protected int install_skeleton(string user_dir, string username) {
   object logger = LoggerFactory->get_logger(THISO);
   if (file_exists(user_dir)) {
     return 0;
@@ -123,7 +123,7 @@ int install_skeleton(string user_dir, string username) {
  * @param  username      the username
  * @return 1 for success, 0 for failure
  */
-int apply_template(string template_path, string username) {
+protected int apply_template(string template_path, string username) {
   if ((strlen(template_path) < 10) 
       || (template_path[<9..<1] != TEMPLATE_SUFFIX)) {
     return 0;
@@ -159,7 +159,7 @@ int apply_template(string template_path, string username) {
  * @param  password      the hashed password
  * @return 1 for success, 0 for failure
  */
-int save_password(string user_id, string password) {
+protected int save_password(string user_id, string password) {
   object logger = LoggerFactory->get_logger(THISO);
   string username = UserTracker->query_username(user_id);
   string passwd_file = passwd_file(username);
@@ -187,7 +187,7 @@ int save_password(string user_id, string password) {
  * @param  user_id       the user id to attach to session
  * @return the attached session id
  */
-string attach_session(object interactive, string user_id) {
+protected string attach_session(object interactive, string user_id) {
   object logger = LoggerFactory->get_logger(THISO);
 
   // get last connected session, or create new one

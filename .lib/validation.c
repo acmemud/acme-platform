@@ -4,8 +4,12 @@
  * @author devo@eotl
  * @alias ValidationLib
  */
+private inherit UserLib;
 
-inherit UserLib;
+public int validate_max_length(mixed arg, mixed len);
+public int validate_min_length(mixed arg, mixed len);
+public int validate_not_empty(mixed arg);
+public int validate_is_user(string username);
 
 /**
  * Validate a string/array/mapping doesn't exceed a specified length.
@@ -14,7 +18,7 @@ inherit UserLib;
  * @param  len           the maximum length
  * @return 1 if valid, otherwise 0
  */
-int validate_max_length(mixed arg, mixed len) {
+public int validate_max_length(mixed arg, mixed len) {
   return (sizeof(arg) <= to_int(len));
 }
 
@@ -25,7 +29,7 @@ int validate_max_length(mixed arg, mixed len) {
  * @param  len           the minimum length
  * @return 1 if valid, otherwise 0
  */
-int validate_min_length(mixed arg, mixed len) {
+public int validate_min_length(mixed arg, mixed len) {
   return (sizeof(arg) >= to_int(len));
 }
 
@@ -35,7 +39,7 @@ int validate_min_length(mixed arg, mixed len) {
  * @param  arg           a string/array/mapping
  * @return 1 if valid, otherwise 0
  */
-int validate_not_empty(mixed arg) {
+public int validate_not_empty(mixed arg) {
   return validate_min_length(arg, 1);
 }
 
@@ -45,7 +49,7 @@ int validate_not_empty(mixed arg) {
  * @param  username      the username
  * @return 1 if valid, otherwise 0
  */
-int validate_is_user(string username) {
+public int validate_is_user(string username) {
   return user_exists(username);
 }
 

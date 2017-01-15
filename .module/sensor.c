@@ -11,25 +11,26 @@
 #include <message.h>
 #include <sensor.h>
 
-inherit JSONLib;
-inherit MessageLib;
-inherit ObjectLib;
+private inherit JSONLib;
+private inherit MessageLib;
+private inherit ObjectLib;
 
 private mapping CAPABILITIES_VAR = ([ CAP_SENSOR ]);
 private mapping CMD_IMPORTS_VAR = ([ ]);
 
-protected void setup();
-mixed *try_message(string topic, string message, mapping context, 
-                   object sender);
-struct Message render_message(string topic, string message, mapping context, 
-                              object sender);
-void on_message(struct Message msg);
+public void setup();
+public mixed *try_message(string topic, string message, mapping context, 
+                          object sender);
+public struct Message render_message(string topic, string message, 
+                                     mapping context, object sender);
+public void on_message(struct Message msg);
 string query_terminal_type();
+int is_sensor();
 
 /**
  * Setup the SensorMixin.
  */
-protected void setup() {
+public void setup() {
 }
 
 /**
@@ -42,8 +43,8 @@ protected void setup() {
  * @param  sender        the sending object, or for anonymous messages
  * @return extra args to be passed to on_message() after delivery
  */
-mixed *try_message(string topic, string message, mapping context, 
-                   object sender) {
+public mixed *try_message(string topic, string message, mapping context, 
+                          object sender) {
   return ({ });
 }
 
@@ -58,8 +59,8 @@ mixed *try_message(string topic, string message, mapping context,
  * @param  sender        the sending object, or for anonymous messages
  * @return a new Message struct representing the rendered message info
  */
-struct Message render_message(string topic, string message, mapping context, 
-                              object sender) {
+public struct Message render_message(string topic, string message, 
+                                     mapping context, object sender) {
   object logger = LoggerFactory->get_logger(THISO);
   struct Message result = (<Message>
     topic: topic,
@@ -83,7 +84,7 @@ struct Message render_message(string topic, string message, mapping context,
  * 
  * @param  msg  the rendered message
  */
-void on_message(struct Message msg) {
+public void on_message(struct Message msg) {
   return;
 }
 
@@ -96,4 +97,13 @@ void on_message(struct Message msg) {
  */
 string query_terminal_type() {
   return DEFAULT_TERMINAL_TYPE;
+}
+
+/**
+ * Return true to indicate this object is a sensor.
+ * 
+ * @return 1
+ */
+int is_sensor() {
+  return 1;
 }

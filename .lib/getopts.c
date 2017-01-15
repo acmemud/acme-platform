@@ -1,10 +1,15 @@
 /**
  * Utility library for manipulating strings. A mostly straight port of
- * AcmeGetOpts.
+ * AcmeGetOpts. This is mostly around for nostalgiac reasons, you should be
+ * using CommandController.
  * 
  * @author devo@eotl
  * @alias GetoptsLib
  */
+
+protected mixed *getopts(string *args, string validopts);
+protected mixed *getopts_long(string *args, string validopts, 
+                              mapping longopts);
 
 /**
  * Searches an argument list for valid command-line options, as described by
@@ -31,7 +36,7 @@
  * @return           a 3 element array additional args, options, and bad 
  *                   options
  */
-mixed *getopts(string *args, string validopts) {
+protected mixed *getopts(string *args, string validopts) {
   string badopts = "";
   mapping options = ([ ]);
   int anyopt;
@@ -145,7 +150,8 @@ mixed *getopts(string *args, string validopts) {
  * @return           a 3 element array additional args, options, and bad 
  *                   options
  */
-mixed *getopts_long(string *args, string validopts, mapping longopts) {
+protected mixed *getopts_long(string *args, string validopts, 
+                              mapping longopts) {
   mixed *badopts = ({ });
   mapping options = ([ ]);
   int anyopt, anylongopt;

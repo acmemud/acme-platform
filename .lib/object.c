@@ -11,7 +11,11 @@
 #include <object.h>
 #include <zone.h>
 
-inherit AccessLib;
+private inherit AccessLib;
+
+protected varargs int is_reachable(object ob, object who);
+protected mixed *get_path_info(mixed ob);
+protected varargs object reload_object(mixed ob, int flags);  
 
 /**
  * Test whether an object is reachable from another object.
@@ -26,7 +30,7 @@ inherit AccessLib;
  * @param  who the object doing the accessing, defaults to THISP
  * @return     1 if the object is reachable, otherwise 0
  */
-varargs int is_reachable(object ob, object who) {
+protected varargs int is_reachable(object ob, object who) {
   if (!who) {
     who = THISP;
   }
@@ -41,7 +45,7 @@ varargs int is_reachable(object ob, object who) {
  * @return object name, uid, user, domain, zone, category, filename, clone 
  *         number
  */
-mixed *get_path_info(mixed ob) {
+protected mixed *get_path_info(mixed ob) {
   string oname, uid, user;
   int tmp;
   if (objectp(ob)) {
@@ -108,7 +112,7 @@ mixed *get_path_info(mixed ob) {
  * @param  flags         reload flags
  * @return the newly loaded object
  */
-varargs object reload_object(mixed ob, int flags) {  
+protected varargs object reload_object(mixed ob, int flags) {  
   // TODO move/restore inventory
   // TODO move/restore shadows
 

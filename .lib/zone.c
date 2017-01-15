@@ -7,7 +7,7 @@
 #include <zone.h>
 #include <object.h>
 
-inherit ObjectLib;
+private inherit ObjectLib;
 
 struct ZoneInfo {
   string id;
@@ -25,13 +25,17 @@ struct ZoneInstanceInfo {
   string label;
 };
 
+protected int valid_zone_id(string zone_id);
+protected string get_parent_zone(string zone_id);
+protected string get_zone(object ob);
+
 /**
  * Test whether a zone id is valid.
  * 
  * @param  zone_id       the zone id
  * @return 1 if is a valid zone id, otherwise 0
  */
-int valid_zone_id(string zone_id) {
+protected int valid_zone_id(string zone_id) {
   return (strstr(zone_id, ZONE_DELIM CATEGORY_DELIM) == -1);
 }
 
@@ -41,7 +45,7 @@ int valid_zone_id(string zone_id) {
  * @param  zone_id       the zone id
  * @return the parent zone id
  */
-string get_parent_zone(string zone_id) {
+protected string get_parent_zone(string zone_id) {
   if (!valid_zone_id(zone_id)) {
     return 0;
   }
@@ -59,6 +63,6 @@ string get_parent_zone(string zone_id) {
  * @param  ob the object to query
  * @return    the object's zone
  */
-string get_zone(object ob) {
+protected string get_zone(object ob) {
   return get_path_info(ob)[PATH_INFO_ZONE];
 }

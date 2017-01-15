@@ -6,22 +6,22 @@
  */
 #include <capability.h>
 
-inherit AvatarMixin;
-inherit SoulMixin;
+virtual inherit AvatarMixin;
+virtual inherit SoulMixin;
 
 private mapping CAPABILITIES_VAR = ([ CAP_PLAYER ]);
 
 string player;
 
-protected void setup();
-protected void set_player(string player_id);
-public string query_player();
-public nomask int is_player();
+public void setup();
+void set_player(string player_id);
+string query_player();
+int is_player();
 
 /**
  * Setup the PlayerMixin.
  */
-protected void setup() {
+public void setup() {
   AvatarMixin::setup();
   SoulMixin::setup();
 }
@@ -31,7 +31,7 @@ protected void setup() {
  * 
  * @param player_id the player id
  */
-protected void set_player(string player_id) {
+void set_player(string player_id) {
   player = player_id;
 }
 
@@ -40,7 +40,7 @@ protected void set_player(string player_id) {
  * 
  * @return the player id
  */
-public string query_player() {
+string query_player() {
   return player;
 }
 
@@ -49,6 +49,6 @@ public string query_player() {
  *
  * @return 1
  */
-public nomask int is_player() {
+int is_player() {
   return 1;
 }
