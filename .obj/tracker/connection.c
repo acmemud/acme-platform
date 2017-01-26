@@ -11,7 +11,7 @@
 inherit SqlMixin;
 inherit ConnectionLib;
 
-#define NEGOTIATION_LOG
+//#define NEGOTIATION_LOG
 
 // ([ str connection_id : ConnectionState state ])
 private mapping connections;

@@ -20,6 +20,7 @@ private mapping domain_roots;
 
 public void setup();
 public void reconfig_signal(string file, string func);
+protected struct DomainConfig parse_config(string domain_file);
 protected void parse_directive(mixed *tag, struct DomainConfig config,
                                mixed *read_checker, mixed *write_checker);
 protected void parse_configure_access(mixed *tag, mixed *read_checker,
@@ -62,7 +63,7 @@ public void reconfig_signal(string file, string func) {
       return;
     }
   } else {
-    struct DomainConfig config = query_domain(file);
+    struct DomainConfig config = domains[query_domain_id(file)];
     if (config) {
       if (!delete_domain(config)) {
         logger->warn("unable to delete domain %O", config->domain_id);
@@ -473,6 +474,7 @@ string query_domain_id(string path) {
  * @param  domain_id the domain id to get
  * @return           the DomainConfig of the specified id, or 0 if no domain
  *                   was found
+ * @deprecated
  */
 struct DomainConfig query_domain(string domain_id) {
   raise_error("FIXME");

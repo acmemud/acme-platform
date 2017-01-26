@@ -119,7 +119,6 @@ protected void welcome(string terminal, mixed is_default) {
   input_to("dummy"); // bug workaround, needed to restore echo
   remove_input_to(THISO);
   restore_prompt();
-  send_prompt(THISO);
   return;
 }
 

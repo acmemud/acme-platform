@@ -59,7 +59,7 @@ mixed *apply_syntax(mixed *command, string arg, mapping opts, mapping badopts,
 
     // XXX cache these?
     object logger = LoggerFactory->get_logger(THISO);
-    logger->info("%O", syntax);
+    //logger->info("%O", syntax);
     mapping valid_opts = mkmapping(map(syntax[SYNTAX_OPTS], 
                                        #'[, OPT_OPT),//'
                                    syntax[SYNTAX_OPTS]);

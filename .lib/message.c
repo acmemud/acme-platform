@@ -10,6 +10,9 @@
 #include <message.h>
 #include <topic.h>
 #include <sensor.h>
+#include <prompt.h>
+
+private inherit PromptLib;
 
 struct Message {
   string topic;
@@ -23,7 +26,7 @@ protected varargs struct Message stdout_msg(string message, mapping context,
                                             object ob, string topic);
 protected varargs struct Message stderr_msg(string message, mapping context, 
                                             object ob, string topic);
-protected string send_prompt(object who);
+protected struct Message send_prompt(object who);
 
 /**
  * Send a message with the specified context. The context can hold anything,
@@ -109,6 +112,9 @@ protected varargs struct Message stderr_msg(string message, mapping context,
  * @param  who           the object to prompt
  * @return the prompt string that was sent
  */
-protected string send_prompt(object who) {
-  return PostalService->prompt_message(who, THISO);
+protected struct Message send_prompt(object who) {
+  mixed *prompt_info = prompt_info(who);
+  string prompt = funcall(prompt_info[<1][PROMPT_INFO_PROMPT], who
+                          prompt_info[<1][PROMPT_INFO_CONTEXT]);
+  return PostalService->prompt_message(who, prompt, ([ ]), THISO);
 }

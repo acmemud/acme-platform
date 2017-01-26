@@ -9,6 +9,7 @@
 #pragma no_clone
 #include <message.h>
 #include <capability.h>
+#include <topic.h>
 
 private inherit MessageLib;
 private inherit CapabilityLib;
@@ -17,7 +18,8 @@ public void setup();
 public varargs struct Message send_message(object target, string topic, 
                                            string message, mapping context, 
                                            object sender);
-public varargs string prompt_message(object target, object sender);
+public varargs struct Message prompt_message(object target, string message, 
+                                             mapping context, object sender);
 
 /**
  * Setup the PostalService.
@@ -78,30 +80,26 @@ public varargs struct Message send_message(object target, string topic,
  *                       messages
  * @return the prompt that was sent, or 0 unsent
  */
-public varargs string prompt_message(object target, object sender) {
+public varargs struct Message prompt_message(object target, string message, 
+                                             mapping context, object sender) {
   if (!interactive(target)) {
     // TODO review this, maybe do target->is_interactive() instead
     return 0;
   }  
+
+  if (!mappingp(context)) {
+    context = ([ ]);
+  }
 
   if (sender && (sender != previous_object())) {
     raise_error("not allowed to spoof\n");
     return 0;
   }
 
-  // XXX make sure query_command() is 0 (coming from input_to())
-
-  mixed prompt = set_prompt(0, target);
-  if (closurep(prompt)) {
-    prompt = funcall(prompt);
-  } 
-
-  if (!prompt) {
-    return 0;
-  }
-
-  efun::tell_object(target, prompt);
-  return prompt;
+  string topic = TOPIC_PROMPT;
+  struct Message msg = target->render_message(topic, message, context, sender);
+  efun::tell_object(target, msg->message);
+  return msg;
 }
 
 /**

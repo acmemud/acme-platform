@@ -37,7 +37,7 @@ public mapping execute(mapping model, string verb) {
   if (!user_id) {
     string msg = sprintf("User creation failed: username: %O\n", 
                          model["username"]); 
-    stdout_msg(msg, ([ ]), THISP, TOPIC_LOGIN);
+    stdout_msg(msg, ([ ]), THISP);
     return fail_result(result);
   }
   result["user_id"] = user_id;
@@ -48,11 +48,15 @@ public mapping execute(mapping model, string verb) {
   if (!session_id) {
     string msg = sprintf("Attaching user session failed: username: %O\n", 
                          model["username"]); 
-    stdout_msg(msg, ([ ]), THISP, TOPIC_LOGIN);
+    stdout_msg(msg, ([ ]), THISP);
     return fail_result(result);
   }
   result["session_id"] = session_id;
 
+  advance_step(result);
+  string msg = sprintf("Registration complete! Welcome to the game, %s.\n",
+                       model["username"]);
+  stdout_msg(msg, ([ ]), THISP);
   return pass_result(result);
 }
 

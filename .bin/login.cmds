@@ -27,10 +27,10 @@
         <validate validator="not_empty">
           <fail>Empty passwords not allowed.</fail>
         </validate>
-        <prompt noecho="true">Enter your password</prompt>
+        <prompt noEcho="true">Enter your password</prompt>
       </field>
       <field id="confirmPassword" type="string" required="true" prompt="always">
-        <prompt noecho="true">Confirm your password</prompt>
+        <prompt noEcho="true">Confirm your password</prompt>
       </field>
     </fields>
     <syntax minArgs="0" maxArgs="1">

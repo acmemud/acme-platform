@@ -10,9 +10,9 @@
  */
 #pragma no_clone
 #include <sys/strings.h>
-#include <sys/input_to.h>
 #include <command.h>
 #include <command_controller.h>
+#include <prompt.h>
 
 private inherit CommandLib;
 private inherit MessageLib;
@@ -22,6 +22,7 @@ private inherit StructLib;
 private inherit ObjectExpansionLib;
 private inherit FileLib;
 private inherit FormatStringLib;
+private inherit PromptLib;
 
 struct CommandState {
   string verb;
@@ -411,9 +412,9 @@ int process_field(struct CommandState state, mixed *field, string field_type,
  */
 void field_prompt(struct CommandState state, mixed *field, string field_type, 
                   mixed index, closure callback) {
-  int flags = INPUT_PROMPT;
+  mapping context = ([ ]);
   if (field[FIELD_PROMPT][PROMPT_NOECHO]) {
-    flags |= INPUT_NOECHO;
+    context[PROMPT_NO_ECHO] = 1;
   }
 
   string val = get_struct_member(state, field_type)[index];
@@ -427,15 +428,15 @@ void field_prompt(struct CommandState state, mixed *field, string field_type,
       : field[FIELD_TYPE]),
     val
   );
-  input_to("field_input", flags, prompt, state, field, field_type, index, 
-           callback);
+  prompt(THISP, prompt, context, 
+         #'field_input, state, field, field_type, index, callback);
 }
 
 /**
  * Handle field prompt input. This should update the command state with the
  * new value and re-run process_command().
  * 
- * @param  arg           the input string
+ * @param  input         the input string
  * @param  state         the command state, a struct containing all the 
  *                       information about the command-to-be-executed we have
  *                       so far
@@ -446,13 +447,15 @@ void field_prompt(struct CommandState state, mixed *field, string field_type,
  * @param  index         field index, int for arg position, string for opts or
  *                       extra field ids
  * @param  callback      the callback to execute the validated command
+ * @return 0 to indicate success
  */
-public void field_input(string arg, struct CommandState state, mixed *field, 
+public int field_input(string input, struct CommandState state, mixed *field, 
                         string field_type, mixed index, closure callback) {
-  if (arg && strlen(arg)) {
-    get_struct_member(state, field_type)[index] = arg;
+  if (input && strlen(input)) {
+    get_struct_member(state, field_type)[index] = input;
   }
   process_command(state, callback);
+  return 0;
 }
 
 /**
@@ -608,7 +611,6 @@ string parse_enum(string arg, mixed val, mixed *enum) {
  * @return a fail message, or 0 if value was parsed successfully
  */
 string parse_file(string arg, mixed val) {
-  // TODO optimize and customize this logic
   mixed result;
   string err = parse_files(arg, &result);
   if (err) {
@@ -617,6 +619,7 @@ string parse_file(string arg, mixed val) {
   if (!sizeof(result)) {
     val = 0;
   } else {
+    // TODO prompt user for file selection when size > 1
     val = result[0];
   }
   return 0;
@@ -648,8 +651,17 @@ string parse_files(string arg, mixed val) {
  * @return a fail message, or 0 if value was parsed successfully
  */
 string parse_object(string arg, mixed val) {
-  // TODO optimize and customize this logic
-  val = expand_object(arg, THISP, 0);
+  mixed result;
+  string err = parse_objects(arg, &result);
+  if (err) {
+    return err;
+  }
+  if (!sizeof(result)) {
+    val = 0;
+  } else {
+    // TODO prompt user for object selection when size > 1
+    val = result[0];
+  }
   return 0;
 }
 

@@ -14,6 +14,7 @@ private inherit ObjectLib;
 public void setup();
 public void telnet_neg_hook(int action, int option, int *opts);
 public string auto_include_hook(string base_file, string current_file, 
+                                int sys);
 public varargs mixed uids_hook(string objectname, object blueprint);
 public int command_hook(string command, object command_giver);
 public void move_object_hook(object item, object dest);  
