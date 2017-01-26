@@ -50,8 +50,8 @@ int process_field(struct CommandState state, mixed *field, string field_type,
                   mixed index, closure callback);
 void field_prompt(struct CommandState state, mixed *field, string field_type, 
                   mixed index, closure callback);
-public void field_input(string arg, struct CommandState state, mixed *field, 
-                        string field_type, mixed index, closure callback);
+public int field_input(string arg, struct CommandState state, mixed *field, 
+                       string field_type, mixed index, closure callback);
 string parse_value(struct CommandState state, mixed *field, string field_type, 
                    mixed index, mixed val);
 string parse_boolean(string arg, mixed val);
@@ -73,7 +73,7 @@ public mapping execute(mapping model, string verb);
  * Setup this command controller.
  */
 public void setup() {
-  prompt_formatter = parse_format(DEFAULT_PROMPT, ([
+  prompt_formatter = parse_format(DEFAULT_CMD_PROMPT, ([
       'm' : ({ 0, "%s", ({ ''message }) }),
       't' : ({ 0, "%s", ({ ''type }) }),
       'd' : ({ 0, "%s", ({ 
@@ -87,7 +87,7 @@ public void setup() {
     ({ 'message, 'type, 'default })
   ); //'
 
-  fail_formatter = parse_format(DEFAULT_FAIL, ([
+  fail_formatter = parse_format(DEFAULT_CMD_FAIL, ([
       'm' : ({ 0, "%s", ({ ({ #'||, ''message, "" }) }) }),
       'v' : ({ 0, "%s", ({ ''verb }) })
     ]),
@@ -428,6 +428,7 @@ void field_prompt(struct CommandState state, mixed *field, string field_type,
       : field[FIELD_TYPE]),
     val
   );
+//  LoggerFactory->get_logger(THISO)->info("%O %O %O %O %O %O %O %O", THISP, prompt, context, state, field, field_type, index, callback);
   prompt(THISP, prompt, context, 
          #'field_input, state, field, field_type, index, callback);
 }
@@ -450,7 +451,7 @@ void field_prompt(struct CommandState state, mixed *field, string field_type,
  * @return 0 to indicate success
  */
 public int field_input(string input, struct CommandState state, mixed *field, 
-                        string field_type, mixed index, closure callback) {
+                       string field_type, mixed index, closure callback) {
   if (input && strlen(input)) {
     get_struct_member(state, field_type)[index] = input;
   }

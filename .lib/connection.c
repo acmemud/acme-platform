@@ -132,24 +132,3 @@ protected varargs string query_terminal_type(object ob) {
   }
   return 0;
 }
-
-/**
- * Restore a connected object's configured prompt.
- * 
- * @param  ob            the connected object, defaults to THISO
- */
-protected varargs void restore_prompt(object ob) {
-  if (!ob) {
-    ob = THISO;
-  }
-  if (ob->has_shell()) {
-    set_prompt(lambda(0,
-      ({ #'+,
-        ({ #'call_other, ob, "query_context" }),
-        DEFAULT_PROMPT
-      })
-    ), ob);
-  } else {
-    set_prompt(DEFAULT_PROMPT, ob);
-  }
-}

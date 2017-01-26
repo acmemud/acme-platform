@@ -9,6 +9,7 @@ virtual inherit AvatarMixin;
 virtual inherit SoulMixin;
 
 private inherit ExceptionLib;
+private inherit PromptLib;
 private inherit SessionLib;
 private inherit ZoneLib;
 
@@ -145,6 +146,8 @@ public void on_descend(string session_id, string subsession_id,
                        string player_id, object room, varargs mixed *args) {
   object logger = LoggerFactory->get_logger(THISO);
   AvatarMixin::on_descend(session_id);
+
+  prompt(THISO);
 
   object avatar = SessionTracker->query_avatar(subsession_id);  
   if (avatar) {

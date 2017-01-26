@@ -18,6 +18,7 @@ struct Message {
   string topic;
   string message;
   mapping context;
+  string term;
 };
 
 protected varargs struct Message send_msg(string message, mapping context, 
@@ -27,6 +28,7 @@ protected varargs struct Message stdout_msg(string message, mapping context,
 protected varargs struct Message stderr_msg(string message, mapping context, 
                                             object ob, string topic);
 protected struct Message send_prompt(object who);
+protected void send_newline(object who);
 
 /**
  * Send a message with the specified context. The context can hold anything,
@@ -114,7 +116,11 @@ protected varargs struct Message stderr_msg(string message, mapping context,
  */
 protected struct Message send_prompt(object who) {
   mixed *prompt_info = prompt_info(who);
-  string prompt = funcall(prompt_info[<1][PROMPT_INFO_PROMPT], who
+  string prompt = funcall(prompt_info[<1][PROMPT_INFO_PROMPT], who,
                           prompt_info[<1][PROMPT_INFO_CONTEXT]);
   return PostalService->prompt_message(who, prompt, ([ ]), THISO);
+}
+
+protected void send_newline(object who) {
+  PostalService->newline(who);
 }

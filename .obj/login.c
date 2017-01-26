@@ -16,6 +16,7 @@ virtual inherit SensorMixin;
 private inherit ConnectionLib;
 private inherit MessageLib;
 private inherit ObjectLib;
+private inherit PromptLib;
 
 private string CMD_IMPORTS_VAR = PlatformBinDir "/login.cmds";
 
@@ -118,7 +119,7 @@ protected void welcome(string terminal, mixed is_default) {
   remove_input_to(THISO);
   input_to("dummy"); // bug workaround, needed to restore echo
   remove_input_to(THISO);
-  restore_prompt();
+  prompt();
   return;
 }
 

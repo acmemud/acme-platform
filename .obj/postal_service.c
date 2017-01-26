@@ -20,6 +20,7 @@ public varargs struct Message send_message(object target, string topic,
                                            object sender);
 public varargs struct Message prompt_message(object target, string message, 
                                              mapping context, object sender);
+public void newline(object target);
 
 /**
  * Setup the PostalService.
@@ -28,7 +29,7 @@ public void setup() {
 }
 
 /**
- * Send a message to a sensor object. Target must be a sensor.
+ * Send a message to an object. Target must be a sensor.
  * 
  * @param  target        the object to which the message should be delivered,
  *                       must be a "sensor"
@@ -73,12 +74,17 @@ public varargs struct Message send_message(object target, string topic,
 }
 
 /**
- * Send a prompt message to an interactive object.
+ * Send a prompt message to an object. Target must be interactive, but not
+ * necessarily a sensor.
  * 
- * @param  target        the object to prompt
+ * @param  target        the object to which the message should be delivered,
+ *                       must be interactive
+ * @param  message       the message to be delivered, a string
+ * @param  context       the message context, a mapping
  * @param  sender        the object doing the sending, or 0 for anonymous 
  *                       messages
- * @return the prompt that was sent, or 0 unsent
+ * @return a Message struct representing the sent message, or 0 if message
+ *         could not be sent
  */
 public varargs struct Message prompt_message(object target, string message, 
                                              mapping context, object sender) {
@@ -100,6 +106,16 @@ public varargs struct Message prompt_message(object target, string message,
   struct Message msg = target->render_message(topic, message, context, sender);
   efun::tell_object(target, msg->message);
   return msg;
+}
+
+/**
+ * Send a newline to an object. Newline is sent raw, no additional rendering
+ * is performend.
+ * 
+ * @param  target        the object to which the message should be delivered
+ */
+public void newline(object target) {
+  efun::tell_object(target, "\n");
 }
 
 /**

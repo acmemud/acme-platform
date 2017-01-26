@@ -31,6 +31,7 @@
 #define ObjectLib            PlatformLibDir "/object"
 #define PlayerLib            PlatformLibDir "/player"
 #define ProgramLib           PlatformLibDir "/program"
+#define PromptLib            PlatformLibDir "/prompt"
 #define RenderLib            PlatformLibDir "/render"
 #define RodneyClientLib      PlatformLibDir "/rodney_client"
 #define SessionLib           PlatformLibDir "/session"

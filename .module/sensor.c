@@ -94,12 +94,13 @@ public mixed *try_message(string topic, string message, mapping context,
 public struct Message render_message(string topic, string message, 
                                      mapping context, object sender) {
   object logger = LoggerFactory->get_logger(THISO);
+  string term = query_terminal_type();
   struct Message result = (<Message>
     topic: topic,
     message: message,
     context: context,
+    term: term
   );
-  string term = query_terminal_type();
   object renderer = TopicTracker->get_renderer(topic, term);
   if (renderer) {
     result->message = (renderer->render(term, topic, message, context, 

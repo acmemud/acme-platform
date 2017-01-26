@@ -3,6 +3,7 @@
  * 
  * @alias PromptLib
  */
+#pragma no_clone
 #include <sys/input_to.h>
 #include <prompt.h>
 
@@ -34,17 +35,17 @@ varargs protected void prompt(object ob, mixed prompt, mapping context,
   if (!objectp(ob)) {
     ob = THISP;
   }
-  if (!stringp(prompt) || !closurep(prompt)) {
+  if (!stringp(prompt) && !closurep(prompt)) {
     prompt = DEFAULT_PROMPT;
   }
   if (!mappingp(context)) { 
     context = ([ ]);
   }
   if (closurep(callback)) {
-    context[PROMPT_TYPE] = INPUT_PROMPT;
+    context[PROMPT_TYPE] = PROMPT_TYPE_INPUT;
     input_prompt(ob, prompt, context, callback, args);
   } else {
-    context[PROMPT_TYPE] = COMMAND_PROMPT;
+    context[PROMPT_TYPE] = PROMPT_TYPE_COMMAND;
     command_prompt(ob, prompt, context);
   }
   return;
@@ -63,7 +64,6 @@ protected void input_prompt(object ob, mixed prompt, mapping context,
                             closure callback, mixed *args) {
   object oldp = THISP;
   set_this_player(ob);
-  do_prompt(prompt);
   int flags = 0;
   flags |= INPUT_PROMPT;
   if (context[PROMPT_NO_ECHO]) {
@@ -77,12 +77,16 @@ protected void input_prompt(object ob, mixed prompt, mapping context,
   } 
   closure print_prompt = lambda(0, 
     ({ #',,
-       ({ #'call_other, 
-          PostalService, 
-          "prompt_message", 
-          ob,
-          ({ #'funcall, prompt, ob, context }) 
-       }), 0
+       ({ #'=, 
+          'msg,
+          ({ #'call_other, 
+             PostalService, 
+             "prompt_message", 
+             ob,
+             ({ #'funcall, prompt, ob, context }) 
+          }) 
+       }),
+       0
     })
   );
   input_to("prompt_input", flags, print_prompt, 
@@ -108,9 +112,17 @@ public void prompt_input(string input, object ob, mixed prompt,
   if (caller_stack_depth()) {
     return;
   }
-  if (stringp(context[PROMPT_DEFAULT]) && (!input || !strlen(input))) {
-    input = context[PROMPT_DEFAULT];
+
+  if (stringp(context[DEFAULT_PROMPT]) && (!input || !strlen(input))) {
+    input = context[DEFAULT_PROMPT];
   }
+
+  if (context[PROMPT_NO_ECHO] && ob->is_sensor()) {
+    if (ob->query_terminal_type() != WebClientTerm) {
+      PostalService->newline(ob);
+    }
+  }
+
   mixed result = apply(callback, input, args);
   if (result) {
     if (context[PROMPT_ATTEMPT] <= context[PROMPT_RETRY]) {
@@ -120,6 +132,7 @@ public void prompt_input(string input, object ob, mixed prompt,
       input_prompt(ob, prompt, context, callback, args);
     }
   }
+  
   return;
 }
 

@@ -413,7 +413,7 @@ protected int copy_tree(string src, string dest) {
       string to = sprintf("%s/%s", dest, rel);
       /* WTF mkdir doesn't return 1 like the manpage says
       if (!mkdir(to)) {
-        logger->debug("Couldn't mkdir %s", to);
+        logger->debug("Couldn't mkdir %O", to);
         return 0;
       }
       */
@@ -422,7 +422,7 @@ protected int copy_tree(string src, string dest) {
       string to = sprintf("%s/%s", dest, rel);
       /* WTF copy_file doesn't either 
       if (!copy_file(file, to)) {
-        logger->debug("Couldn't copy file from %s to %s", file, to);
+        logger->debug("Couldn't copy file from %O to %O", file, to);
         return 0;
       }
       */
@@ -456,5 +456,13 @@ protected mixed read_value(string file) {
  * @return 1 for success, 0 for failure
  */
 protected int write_value(string file, mixed value) {
+  object logger = LoggerFactory->get_logger(THISO);
+  /* WTF rm doesn't return 1 like the manpage says
+  if (file_exists(file) && !rm(file)) {
+    logger->debug("Couldn't rm file %O", file);
+    return 0;
+  }
+  */
+  rm(file);
   return write_file(file, save_value(value));
 }
