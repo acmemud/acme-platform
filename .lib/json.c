@@ -673,7 +673,7 @@ varargs string json_encode(mixed value, mixed array pointers) {
             switch(width) {
             case 1      :
                 {
-                    string out;
+                    string out = "";
                     int ix = 0;
                     if(pointers) {
                         // Don't recurse into circular data structures, output null for

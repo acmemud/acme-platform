@@ -7,9 +7,9 @@
 #define TIMEOUT_SECS           (10 * 60)
 #define CLEAR_SCREEN           1
 #define InsecureWarning        "Warning: You are on an insecure connection. " \
-                               "Act accordingly.\n"
+                               "Act accordingly."
 #define DefaultTermWarning     "Unable to detect terminal type. " \
-                               "Using default.\n"
+                               "Using default."
 #define TimeoutMessage         "Timeout exceeded, disconnecting...\n"
 
 #endif  // _LOGIN_H

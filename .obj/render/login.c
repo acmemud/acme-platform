@@ -53,9 +53,6 @@ public string render(string term, string topic, string message,
  */
 string render_welcome(string term, string topic, string message, 
                        mapping context, object sender) {
-  if (term == WebClientTerm) {
-    return render_json(topic, message, context, sender);
-  }
   message = sprintf("%s%s%s%s\n", 
     (context["clearScreen"] ? CLEAR_SCREEN : ""), // TODO abstract ansi
     (context["defaultTerm"] ? context["defaultTerm"] + "\n" : ""),

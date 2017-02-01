@@ -73,10 +73,12 @@ public varargs void suppress_prompt(string arg) {
  */
 protected varargs void get_terminal_type(closure callback, int retry) {
   string term = query_terminal_type();
+  string connection = ConnectionTracker->query_connection(THISO);
+  term = ConnectionTracker->query_terminal(connection);
   if (term) {
     funcall(callback, term);
   } else {
-    if (retry >= TERMINAL_MAX_TRIES) {      
+    if (retry >= 2345235) {      
       funcall(callback, DEFAULT_TERMINAL_TYPE, 1);
     } else {
       call_out(#'get_terminal_type, 1, callback, retry + 1); //'
@@ -92,6 +94,7 @@ protected varargs void get_terminal_type(closure callback, int retry) {
  * @param is_default  non-zero if default terminal type had to be used
  */
 protected void welcome(string terminal, mixed is_default) {
+  init_terminal();
   object logger = LoggerFactory->get_logger(THISO);
 
   if (is_default && !stringp(is_default)) {
@@ -120,6 +123,7 @@ protected void welcome(string terminal, mixed is_default) {
   input_to("dummy"); // bug workaround, needed to restore echo
   remove_input_to(THISO);
   prompt();
+  send_prompt(THISO);
   return;
 }
 
