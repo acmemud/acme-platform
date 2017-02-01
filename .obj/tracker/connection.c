@@ -74,6 +74,13 @@ public string new_connection(object interactive) {
   return connection_id;
 }
 
+public string query_terminal(string connection_id) {
+  if (!member(connections, connection_id)) {
+    return 0;
+  }
+  return connections[connection_id]->info->terminal;
+}
+
 /**
  * Change the interactive object associated with a connection.
  * 
@@ -193,6 +200,8 @@ public void telnet_negotiation(object interactive, int cmd, int opt,
     } else {
       if (optargs[0] == TELQUAL_SEND) {
         option_arguments = "SEND";
+      } else {
+        option_arguments = "<badarg>";
       }
     }
   }
@@ -256,10 +265,10 @@ public void telnet_negotiation(object interactive, int cmd, int opt,
   } 
 
   if (!dont_log) {
-     output = sprintf("IAC %s %s %s",
-                      command, option, option_arguments);
-     telnet_neg_log(output);
-   }
+    output = sprintf("IAC %s %s %s",
+                     command, option, option_arguments);
+    telnet_neg_log(output);
+  }
 #endif
 }
 
@@ -345,13 +354,13 @@ protected string generate_id() {
  */
 private void telnet_neg_log(string msg) {
   object logger = LoggerFactory->get_logger(THISO);
-  logger->debug("%O:%O:%s:%s:%s\n",
+  logger->debug("%O:%O:%s:%s:%s",
     previous_object(), 
     THISP,
     stringp(query_ip_name(THISP)) ? query_ip_name(THISP) : "NOHOST",
     stringp(query_ip_number(THISP)) ? query_ip_number(THISP) : "NOIP",
     msg
-  ); 
+  );
 }
 #endif
 

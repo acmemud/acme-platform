@@ -42,10 +42,8 @@ varargs protected void prompt(object ob, mixed prompt, mapping context,
     context = ([ ]);
   }
   if (closurep(callback)) {
-    context[PROMPT_TYPE] = PROMPT_TYPE_INPUT;
     input_prompt(ob, prompt, context, callback, args);
   } else {
-    context[PROMPT_TYPE] = PROMPT_TYPE_COMMAND;
     command_prompt(ob, prompt, context);
   }
   return;
@@ -62,6 +60,7 @@ varargs protected void prompt(object ob, mixed prompt, mapping context,
  */
 protected void input_prompt(object ob, mixed prompt, mapping context, 
                             closure callback, mixed *args) {
+  context[PROMPT_TYPE] = PROMPT_TYPE_INPUT;
   object oldp = THISP;
   set_this_player(ob);
   int flags = 0;
@@ -144,6 +143,7 @@ public void prompt_input(string input, object ob, mixed prompt,
  * @param  context       the prompt context
  */
 protected void command_prompt(object ob, mixed prompt, mapping context) {
+  context[PROMPT_TYPE] = PROMPT_TYPE_COMMAND;
   closure print_prompt = lambda(({ 'quiet }), 
     ({ #'?, 
        'quiet,

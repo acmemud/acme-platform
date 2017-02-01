@@ -15,7 +15,7 @@
 
 #define AutoInclude          "auto.h"
 #define TopLevelDomain       "acme"
-#define WebClientTerm        "acme"
+#define WebClientTerm        "acme-web"
 
 #define FlavorDir            "/flavor"
 #define PlatformDir          "/platform"

@@ -13,6 +13,7 @@
 
 private inherit MessageLib;
 private inherit CapabilityLib;
+private inherit JSONLib;
 
 public void setup();
 public varargs struct Message send_message(object target, string topic, 
@@ -20,6 +21,7 @@ public varargs struct Message send_message(object target, string topic,
                                            object sender);
 public varargs struct Message prompt_message(object target, string message, 
                                              mapping context, object sender);
+private void message(object target, string topic, struct Message msg);
 public void newline(object target);
 
 /**
@@ -68,7 +70,7 @@ public varargs struct Message send_message(object target, string topic,
   } 
 
   struct Message msg = target->render_message(topic, message, context, sender);
-  efun::tell_object(target, msg->message);
+  message(target, topic, msg);
   apply(#'call_other, target, "on_message", msg, args);
   return msg;
 }
@@ -104,8 +106,28 @@ public varargs struct Message prompt_message(object target, string message,
 
   string topic = TOPIC_PROMPT;
   struct Message msg = target->render_message(topic, message, context, sender);
-  efun::tell_object(target, msg->message);
+  message(target, topic, msg);
   return msg;
+}
+
+/**
+ * Perform the message transmission to the client.
+ * 
+ * @param  target        the object to which the message should be delivered,
+ *                       must be interactive
+ * @param  topic         the message topic
+ * @param  msg           the message to be delivered
+ */
+private void message(object target, string topic, struct Message msg) {
+  string message = msg->message;
+  if (msg->term == WebClientTerm) {
+    message = ",\n" + json_encode(([
+      "topic" : topic,
+      "message" : msg->message,
+      "context" : msg->context
+    ]));
+  }
+  efun::tell_object(target, message);
 }
 
 /**

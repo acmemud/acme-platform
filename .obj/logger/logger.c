@@ -17,6 +17,7 @@
 
 #ifndef EOTL
 private inherit ObjectExpansionLib;
+private inherit MessageLib;
 #endif
 
 private string zone;
@@ -446,7 +447,7 @@ private void do_output(string msg) {
       );
       if (err) { continue; }
       foreach (mixed *ob : consoles) {
-        catch (efun::tell_object(ob[OB_TARGET], msg + "\n"));
+        catch (stderr_msg(msg + "\n", ([ ]), ob[OB_TARGET]));
       }
       break;
 #endif

@@ -39,8 +39,5 @@ public string render(string term, string topic, string message,
  */
 string render_default(string term, string topic, string message, 
                       mapping context, object sender) {
-  if (term == WebClientTerm) {
-    return render_json(topic, message, context, sender);
-  }
   return message;
 }
